@@ -13,13 +13,6 @@ pub fn approve(mut state: State, spender: String, amount: u64) -> ActionResult {
     }
 
     let caller = Transaction::owner();
-    let balances = &mut state.balances;
-
-    // Checking if caller has enough funds
-    let caller_balance = *balances.get(&caller).unwrap_or(&0);
-    if caller_balance < amount {
-        return Err(CallerBalanceNotEnough(caller_balance));
-    }
 
     *state.allowances
                     .entry(caller)

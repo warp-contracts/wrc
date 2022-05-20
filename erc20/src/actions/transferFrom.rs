@@ -5,14 +5,11 @@ use crate::contract_utils::handler_result::HandlerResult;
 use crate::contract_utils::js_imports::{log, SmartWeave, Transaction};
 
 pub fn transferFrom(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
-    log(("caller ".to_owned() + &SmartWeave::caller()).as_str());
-    log(("Transaction owner ".to_owned() + &Transaction::owner()).as_str());
-
     if amount == 0 {
         return Err(TransferAmountMustBeHigherThanZero);
     }
 
-    let caller = Transaction::owner();
+    let caller = SmartWeave::caller();
     let balances = &mut state.balances;
 
     // Checking if from has enough funds
@@ -24,7 +21,7 @@ pub fn transferFrom(mut state: State, from: String, to: String, amount: u64) -> 
     // Checking allowance
     let allowance = *state.allowances.get(&from)
                         .map_or(&0, |spenders| {
-                            spenders.get(&caller).unwrap_or(&0)
+                            spenders.get(&caller).unwrap_or(&9)
                         });
 
     if allowance < amount {
@@ -44,3 +41,7 @@ pub fn transferFrom(mut state: State, from: String, to: String, amount: u64) -> 
 
     Ok(HandlerResult::NewState(state))
 }
+
+
+
+
