@@ -179,7 +179,7 @@ describe('Testing the Staking Logic', () => {
     expect((await erc20.allowance(user1, stakingContractTxId)).allowance).toEqual(120);
 
     await expect(staking.stake(110))
-        .rejects.toThrow('Cannot create interaction: [CE:FailedTokenTransfer]');
+        .rejects.toThrow('Cannot create interaction: [CE:FailedTokenTransfer [CE:CallerBalanceNotEnough 100]]');
   });
 
   it('should not stake more than allowed', async () => {
@@ -197,7 +197,7 @@ describe('Testing the Staking Logic', () => {
     expect((await staking.stakeOf(user1)).stake).toEqual(0);
 
     await expect(staking.stake(60))
-        .rejects.toThrow('Cannot create interaction: [CE:FailedTokenTransfer]');
+        .rejects.toThrow('Cannot create interaction: [CE:FailedTokenTransfer [CE:CallerAllowanceNotEnough 50]]');
   });
 
 

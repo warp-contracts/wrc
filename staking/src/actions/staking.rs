@@ -20,6 +20,9 @@ struct Input {
 struct Result {
     #[serde(rename = "type")]
     result_type: String,
+    #[serde(rename = "errorMessage")]
+    #[serde(default)]
+    error_message: String
 }
 
 pub async fn stake(mut state: State, amount: u64) -> ActionResult {
@@ -47,7 +50,7 @@ pub async fn stake(mut state: State, amount: u64) -> ActionResult {
     let result: Result = result.into_serde().unwrap();
 
     if result.result_type != "ok" {
-        return Err(FailedTokenTransfer);
+        return Err(FailedTokenTransfer(result.error_message));
     }
 
     // Update caller balance

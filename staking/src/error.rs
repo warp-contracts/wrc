@@ -2,7 +2,7 @@ use serde::Serialize;
 
 #[derive(Serialize)]
 pub enum ContractError {
-  FailedTokenTransfer,
+  FailedTokenTransfer(String),
   RuntimeError(String),
   TransferAmountMustBeHigherThanZero,
   IDontLikeThisContract,
