@@ -218,4 +218,76 @@ describe('Testing the ERC20 Token', () => {
     expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(1);
   });
 
+  it('should setup user allowances', async () => {
+    await erc20.approve({spender: user2, amount: 20 });
+    await erc20.approve({spender: user3, amount: 30 });
+    await mineBlock(arweave);
+
+    expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
+    expect((await erc20.allowance(owner, user3)).allowance).toEqual(30);
+
+    expect(Object.keys((await erc20.currentState()).allowances)).toHaveLength(1);
+    expect(Object.keys((await erc20.currentState()).allowances[owner])).toHaveLength(2);
+  });
+
+  it('should clean spender allowance after approve', async () => {
+    await erc20.approve({spender: user3, amount: 0 });
+    await mineBlock(arweave);
+
+    expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
+    expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
+
+    expect(Object.keys((await erc20.currentState()).allowances)).toHaveLength(1);
+    expect(Object.keys((await erc20.currentState()).allowances[owner])).toHaveLength(1);
+  });
+
+  it('should clean owner allowance after approve if there are no spenders', async () => {
+    await erc20.approve({spender: user2, amount: 0 });
+    await mineBlock(arweave);
+
+    expect((await erc20.allowance(owner, user2)).allowance).toEqual(0);
+    expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
+
+    expect(Object.keys((await erc20.currentState()).allowances)).toHaveLength(0);
+  });
+
+  it('should reset user balances & allowances', async () => {
+    let erc20FromUser3 = await connectERC20(smartweave, contractTxId, user3Wallet);
+    await erc20FromUser3.transfer({target: owner, qty: 70});
+    await mineBlock(arweave);
+
+    await erc20.approve({spender: user2, amount: 20 });
+    await erc20.approve({spender: user3, amount: 30 });
+    await mineBlock(arweave);
+
+    expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
+    expect((await erc20.allowance(owner, user3)).allowance).toEqual(30);
+
+    expect(Object.keys((await erc20.currentState()).allowances)).toHaveLength(1);
+    expect(Object.keys((await erc20.currentState()).allowances[owner])).toHaveLength(2);
+  });
+
+  it('should clean spender allowance after transfer', async () => {
+    let erc20FromUser3 = await connectERC20(smartweave, contractTxId, user3Wallet);
+    await erc20FromUser3.transferFrom({from: owner, to: user3, amount: 30});
+    await mineBlock(arweave);
+
+    expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
+    expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
+
+    expect(Object.keys((await erc20.currentState()).allowances)).toHaveLength(1);
+    expect(Object.keys((await erc20.currentState()).allowances[owner])).toHaveLength(1);
+  });
+
+  it('should clean owner allowance after transfer if there are no spenders', async () => {
+    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    await erc20FromUser2.transferFrom({from: owner, to: user3, amount: 20});
+    await mineBlock(arweave);
+
+    expect((await erc20.allowance(owner, user2)).allowance).toEqual(0);
+    expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
+
+    expect(Object.keys((await erc20.currentState()).allowances)).toHaveLength(0);
+  });
+
 });

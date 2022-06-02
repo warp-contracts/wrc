@@ -21,7 +21,7 @@ module.exports.interactTransfer = async function (
 
   const erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
 
-  if (target == 'mainnet') {
+  if (target === 'mainnet') {
     const transferTx = await erc20.bundleInteraction({ function: "transfer", target: targetAddress, qty: 1},
         undefined, undefined, true // Strict mode to try dry-run first and report errors
     );
@@ -29,6 +29,7 @@ module.exports.interactTransfer = async function (
         `Check transfer interaction at https://sonar.redstone.tools/#/app/interaction/${transferTx.originalTxId}`
     );
   } else {
+    console.log("LOCAL WRITE INT")
     await mineBlock(arweave);
     const transferId = await erc20.writeInteraction({ function: "transfer", target: targetAddress, qty: 1},
         undefined, undefined, true // Strict mode to try dry-run first and report errors

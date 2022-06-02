@@ -10,11 +10,13 @@ async function jumpTransfer(
     target,
     wallet
 ) {
+    let erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
     const targetWallet = await arweave.wallets.generate();
     const targetAddress = await arweave.wallets.getAddress(targetWallet);
 
-    const erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
+    const walletAddress = await arweave.wallets.getAddress(wallet);
 
+    console.log("Sending: " + walletAddress +   " -> " + targetAddress);
 
     if (target == 'mainnet') {
         const transferTx = await erc20.bundleInteraction({ function: "transfer", target: targetAddress, qty: 1},
@@ -29,8 +31,8 @@ async function jumpTransfer(
             undefined, undefined, true // Strict mode to try dry-run first and report errors
         );
         console.log('Transfer tx id', transferId);
+        await mineBlock(arweave);
     }
-
     return targetWallet;
 };
 
@@ -43,7 +45,12 @@ module.exports.jumpTransfers = async function (
 ) {
     const arweave = connectArweave(host, port, protocol);
     let wallet = await loadWallet(arweave, walletJwk, target, true);
-    for (let i=0; i<1000; i++) {
+
+    for (let i=0; i<100; i++) {
         wallet = await jumpTransfer(arweave, target, wallet);
     }
+
+    let erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
+    const state = await erc20.readState();
+    console.log('Updated state:', state);
 }

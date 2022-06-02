@@ -40,11 +40,30 @@ pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) ->
     balances.insert(to, to_balance + amount);
 
     // Update allowance
-    *state.allowances
-        .entry(from)
-        .or_default()
-        .entry(caller)
-        .or_default() = allowance - amount;
+//     *state.allowances
+//         .entry(from)
+//         .or_default()
+//         .entry(caller)
+//         .or_default() = allowance - amount;
+
+
+    if allowance - amount > 0 {
+            *state.allowances
+                .entry(from)
+                .or_default()
+                .entry(caller)
+                .or_default() = allowance - amount;
+        } else { //Prune state
+            match state.allowances.get_mut(&from) {
+                    Some(spenderAllowances) => {
+                        spenderAllowances.remove(&caller);
+                        if spenderAllowances.is_empty() {
+                            state.allowances.remove(&from);
+                        }
+                    }
+                    None => ()
+                }
+        }
 
     Ok(HandlerResult::NewState(state))
 }

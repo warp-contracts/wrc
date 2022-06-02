@@ -6,16 +6,17 @@ module.exports.connectContract = async function (
   contractTxId,
   target
 ) {
-  if (target === "local") {
-    return SmartWeaveNodeFactory.memCached(arweave)
-        .contract(contractTxId)
-        .connect(wallet);
-  } else  {
+  if (target === "mainnet") {
     return SmartWeaveNodeFactory.memCachedBased(arweave)
         .useRedStoneGateway()
         .build()
         .contract(contractTxId)
         .connect(wallet);
+  } else  {
+    return SmartWeaveNodeFactory.memCached(arweave)
+        .contract(contractTxId)
+        .connect(wallet);
+
   }
 
 };

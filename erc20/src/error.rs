@@ -8,6 +8,5 @@ pub enum ContractError {
   CallerBalanceNotEnough(u64),
   CallerAllowanceNotEnough(u64),
   OnlyOwnerCanEvolve,
-  EvolveNotAllowed,
-  ApprovedAmountMustBeHigherThanZero
+  EvolveNotAllowed
 }
