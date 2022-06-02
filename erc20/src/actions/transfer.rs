@@ -21,8 +21,12 @@ pub fn transfer(mut state: State, qty: u64, target: String) -> ActionResult {
         return Err(CallerBalanceNotEnough(caller_balance));
     }
 
-    // Update caller balance
-    balances.insert(caller, caller_balance - qty);
+    // Update caller balance or prune state if the new value is 0
+    if caller_balance - qty == 0 {
+        balances.remove(&caller);
+    } else  {
+        balances.insert(caller, caller_balance - qty);
+    }
 
     // Update target balance
     let target_balance = *balances.get(&target).unwrap_or(&0);

@@ -10,26 +10,27 @@ module.exports.deploy = async function (host, port, protocol, target, walletJwk)
   const smartweave = SmartWeaveNodeFactory.memCached(arweave);
   const wallet = await loadWallet(arweave, walletJwk, target);
   const walletAddr = await walletAddress(arweave, wallet);
-  const contractSrc = fs.readFileSync(path.join(__dirname, '../../pkg/pst-contract_bg.wasm'));
-  const stateFromFile = JSON.parse(fs.readFileSync(path.join(__dirname, '../state/init-state.json'), 'utf-8'));
+  const contractSrc = fs.readFileSync(path.join(__dirname, '../../pkg/erc20-contract_bg.wasm'));
 
-  const initialState = {
-    ...stateFromFile,
-    ...{
-      owner: walletAddr,
-      balances: {
-        ...stateFromFile.balances,
-        [walletAddr]: 10000000,
-      },
+  let initialState = {
+    canEvolve: true,
+    evolve: "",
+    settings: null,
+    ticker: "ERC20-test",
+    owner: walletAddr,
+    balances: {
+      [walletAddr]: 100,
     },
+    allowances: {}
   };
+
   const contractTxId = await smartweave.createContract.deploy(
     {
       wallet,
       initState: JSON.stringify(initialState),
       src: contractSrc,
       wasmSrcCodeDir: path.join(__dirname, '../../src'),
-      wasmGlueCode: path.join(__dirname, '../../pkg/pst-contract.js'),
+      wasmGlueCode: path.join(__dirname, '../../pkg/erc20-contract.js'),
     },
     target == 'mainnet'
   );

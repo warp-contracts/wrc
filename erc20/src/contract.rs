@@ -1,6 +1,6 @@
 use crate::action::{Action, ActionResult};
 use crate::actions::transfer::transfer;
-use crate::actions::transferFrom::transferFrom;
+use crate::actions::transfer_from::transfer_from;
 use crate::actions::balance::balance;
 use crate::actions::approve::approve;
 use crate::actions::allowance::allowance;
@@ -29,7 +29,7 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
 
     match action {
         Action::Transfer { qty, target } => transfer(current_state, qty, target),
-        Action::TransferFrom { from, to, amount } => transferFrom(current_state, from, to, amount),
+        Action::TransferFrom { from, to, amount } => transfer_from(current_state, from, to, amount),
         Action::Balance { target } => balance(current_state, target),
         Action::Approve { spender, amount } => approve(current_state, spender, amount),
         Action::Allowance { owner, spender } => allowance(current_state, owner, spender),

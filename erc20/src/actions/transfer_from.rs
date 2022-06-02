@@ -4,7 +4,7 @@ use crate::action::ActionResult;
 use crate::contract_utils::handler_result::HandlerResult;
 use crate::contract_utils::js_imports::{log, SmartWeave, Transaction};
 
-pub fn transferFrom(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
+pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
     if amount == 0 {
         return Err(TransferAmountMustBeHigherThanZero);
     }
@@ -28,11 +28,18 @@ pub fn transferFrom(mut state: State, from: String, to: String, amount: u64) -> 
        return Err(CallerAllowanceNotEnough(allowance));
     }
 
-    // Update balances
-    balances.insert(from.to_owned(), from_balance - amount);
-    let toBalance = *balances.get(&to).unwrap_or(&0);
-    balances.insert(to, toBalance + amount);
+    // Update caller balance or prune state if the new value is 0
+        if from_balance - amount == 0 {
+            balances.remove(&from);
+        } else  {
+            balances.insert(from.to_owned(), from_balance - amount);
+        }
 
+    // Update target balance
+    let to_balance = *balances.get(&to).unwrap_or(&0);
+    balances.insert(to, to_balance + amount);
+
+    // Update allowance
     *state.allowances
         .entry(from)
         .or_default()

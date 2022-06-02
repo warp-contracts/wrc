@@ -3,9 +3,19 @@ const { SmartWeaveNodeFactory } = require('redstone-smartweave');
 module.exports.connectContract = async function (
   arweave,
   wallet,
-  contractTxId
+  contractTxId,
+  target
 ) {
-  return SmartWeaveNodeFactory.memCached(arweave)
-    .contract(contractTxId)
-    .connect(wallet);
+  if (target === "local") {
+    return SmartWeaveNodeFactory.memCached(arweave)
+        .contract(contractTxId)
+        .connect(wallet);
+  } else  {
+    return SmartWeaveNodeFactory.memCachedBased(arweave)
+        .useRedStoneGateway()
+        .build()
+        .contract(contractTxId)
+        .connect(wallet);
+  }
+
 };

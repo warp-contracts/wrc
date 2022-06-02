@@ -16,7 +16,7 @@ import {
   deployERC20,
   ERC20Contract,
   ERC20State
-} from './erc20-js-binding';
+} from '../utils/erc20-js-binding';
 import path from 'path';
 import { addFunds, mineBlock } from '../utils';
 
@@ -160,7 +160,10 @@ describe('Testing the ERC20 Token', () => {
 
   it('should transfer tokens using allowance', async () => {
     expect((await erc20.balanceOf(owner)).balance).toEqual(90);
+    expect((await erc20.balanceOf(user2)).balance).toEqual(10);
+    expect((await erc20.balanceOf(user3)).balance).toEqual(0);
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
+
 
     let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
 
@@ -176,8 +179,43 @@ describe('Testing the ERC20 Token', () => {
     console.log(state);
 
     expect((await erc20.balanceOf(owner)).balance).toEqual(70);
+    expect((await erc20.balanceOf(user2)).balance).toEqual(10);
     expect((await erc20.balanceOf(user3)).balance).toEqual(20);
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(0);
+  });
+
+  it('should clean balances state after transfer', async () => {
+    expect((await erc20.balanceOf(owner)).balance).toEqual(70);
+    expect((await erc20.balanceOf(user2)).balance).toEqual(10);
+    expect((await erc20.balanceOf(user3)).balance).toEqual(20);
+    expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(3);
+
+    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    await erc20FromUser2.transfer({target: user3, qty: 10});
+    await mineBlock(arweave);
+
+    expect((await erc20.balanceOf(owner)).balance).toEqual(70);
+    expect((await erc20.balanceOf(user2)).balance).toEqual(0);
+    expect((await erc20.balanceOf(user3)).balance).toEqual(30);
+    expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(2);
+  });
+
+  it('should clean balances state after transferFrom', async () => {
+    expect((await erc20.balanceOf(owner)).balance).toEqual(70);
+    expect((await erc20.balanceOf(user3)).balance).toEqual(30);
+    expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(2);
+
+    await erc20.approve({spender: user2, amount: 70 });
+    await mineBlock(arweave);
+
+    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    await erc20FromUser2.transferFrom({from: owner, to: user3, amount: 70});
+    await mineBlock(arweave);
+
+    expect((await erc20.balanceOf(owner)).balance).toEqual(0);
+    expect((await erc20.balanceOf(user2)).balance).toEqual(0);
+    expect((await erc20.balanceOf(user3)).balance).toEqual(100);
+    expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(1);
   });
 
 });

@@ -9,6 +9,5 @@ pub enum ContractError {
   CallerAllowanceNotEnough(u64),
   OnlyOwnerCanEvolve,
   EvolveNotAllowed,
-  WalletHasNoBalanceDefined(String),
   ApprovedAmountMustBeHigherThanZero
 }

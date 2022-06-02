@@ -1,5 +1,5 @@
 pub mod transfer;
-pub mod transferFrom;
+pub mod transfer_from;
 pub mod balance;
 pub mod approve;
 pub mod allowance;
