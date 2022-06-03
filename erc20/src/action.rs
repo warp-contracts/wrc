@@ -29,17 +29,7 @@ pub enum Action {
     },
     Evolve {
         value: String
-    },
-    #[serde(rename_all = "camelCase")]
-    ForeignRead {
-        contract_tx_id: String
-    },
-    #[serde(rename_all = "camelCase")]
-    ForeignWrite {
-        contract_tx_id: String,
-        qty: u64,
-        target: String,
-    },
+    }
 }
 
 #[derive(Serialize, Deserialize)]

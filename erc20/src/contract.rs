@@ -1,12 +1,10 @@
 use crate::action::{Action, ActionResult};
-use crate::actions::transfer::transfer;
-use crate::actions::transfer_from::transfer_from;
+use crate::actions::transfers::transfer;
+use crate::actions::transfers::transfer_from;
 use crate::actions::balance::balance;
-use crate::actions::approve::approve;
-use crate::actions::allowance::allowance;
+use crate::actions::allowances::approve;
+use crate::actions::allowances::allowance;
 use crate::actions::evolve::evolve;
-use crate::actions::foreign_read::{foreign_read};
-use crate::actions::foreign_write::foreign_write;
 use crate::contract_utils::js_imports::{Block, Contract, log, SmartWeave, Transaction};
 use crate::state::State;
 
@@ -34,7 +32,5 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
         Action::Approve { spender, amount } => approve(current_state, spender, amount),
         Action::Allowance { owner, spender } => allowance(current_state, owner, spender),
         Action::Evolve { value } => evolve(current_state, value),
-        Action::ForeignRead { contract_tx_id } => foreign_read(current_state, contract_tx_id).await,
-        Action::ForeignWrite { contract_tx_id, qty, target } => foreign_write(current_state, contract_tx_id, qty, target).await,
     }
 }
