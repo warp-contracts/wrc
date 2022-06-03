@@ -26,7 +26,7 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
     log(&("SmartWeave::caller()".to_owned() + &SmartWeave::caller()));
 
     match action {
-        Action::Transfer { qty, target } => transfer(current_state, qty, target),
+        Action::Transfer { to, amount } => transfer(current_state, to, amount),
         Action::TransferFrom { from, to, amount } => transfer_from(current_state, from, to, amount),
         Action::Balance { target } => balance(current_state, target),
         Action::Approve { spender, amount } => approve(current_state, spender, amount),

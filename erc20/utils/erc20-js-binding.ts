@@ -81,8 +81,8 @@ export interface ERC20State extends EvolveState {
  * Interface describing data required for making a transfer
  */
 export interface TransferInput {
-    target: string;
-    qty: number;
+    to: string;
+    amount: number;
 }
 
 /**

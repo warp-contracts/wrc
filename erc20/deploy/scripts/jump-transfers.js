@@ -19,7 +19,7 @@ async function jumpTransfer(
     console.log("Sending: " + walletAddress +   " -> " + targetAddress);
 
     if (target == 'mainnet') {
-        const transferTx = await erc20.bundleInteraction({ function: "transfer", target: targetAddress, qty: 1},
+        const transferTx = await erc20.bundleInteraction({ function: "transfer", to: targetAddress, amount: 1},
             undefined, undefined, true // Strict mode to try dry-run first and report errors
         );
         console.log(
@@ -27,7 +27,7 @@ async function jumpTransfer(
         );
     } else {
         await mineBlock(arweave);
-        const transferId = await erc20.writeInteraction({ function: "transfer", target: targetAddress, qty: 1},
+        const transferId = await erc20.writeInteraction({ function: "transfer", to: targetAddress, amount: 1},
             undefined, undefined, true // Strict mode to try dry-run first and report errors
         );
         console.log('Transfer tx id', transferId);

@@ -118,15 +118,15 @@ describe('Testing the ERC20 Token', () => {
 
   it('should not transfer more than user balance', async () => {
     await expect(erc20.transfer({
-      target: 'user2',
-      qty: 101,
+      to: 'user2',
+      amount: 101,
     })).rejects.toThrow('Cannot create interaction: [CE:CallerBalanceNotEnough 100]');
   });
 
   it('should properly transfer tokens', async () => {
     await erc20.transfer({
-      target: user2,
-      qty: 10,
+      to: user2,
+      amount: 10,
     });
 
     await mineBlock(arweave);
@@ -191,7 +191,7 @@ describe('Testing the ERC20 Token', () => {
     expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(3);
 
     let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
-    await erc20FromUser2.transfer({target: user3, qty: 10});
+    await erc20FromUser2.transfer({to: user3, amount: 10});
     await mineBlock(arweave);
 
     expect((await erc20.balanceOf(owner)).balance).toEqual(70);
@@ -253,7 +253,7 @@ describe('Testing the ERC20 Token', () => {
 
   it('should reset user balances & allowances', async () => {
     let erc20FromUser3 = await connectERC20(smartweave, contractTxId, user3Wallet);
-    await erc20FromUser3.transfer({target: owner, qty: 70});
+    await erc20FromUser3.transfer({to: owner, amount: 70});
     await mineBlock(arweave);
 
     await erc20.approve({spender: user2, amount: 20 });

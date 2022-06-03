@@ -22,7 +22,7 @@ module.exports.interactTransfer = async function (
   const erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
 
   if (target === 'mainnet') {
-    const transferTx = await erc20.bundleInteraction({ function: "transfer", target: targetAddress, qty: 1},
+    const transferTx = await erc20.bundleInteraction({ function: "transfer", to: targetAddress, amount: 1},
         undefined, undefined, true // Strict mode to try dry-run first and report errors
     );
     console.log(
@@ -31,7 +31,7 @@ module.exports.interactTransfer = async function (
   } else {
     console.log("LOCAL WRITE INT")
     await mineBlock(arweave);
-    const transferId = await erc20.writeInteraction({ function: "transfer", target: targetAddress, qty: 1},
+    const transferId = await erc20.writeInteraction({ function: "transfer", to: targetAddress, amount: 1},
         undefined, undefined, true // Strict mode to try dry-run first and report errors
     );
     console.log('Transfer tx id', transferId);

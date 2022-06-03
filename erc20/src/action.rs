@@ -8,8 +8,8 @@ use crate::state::State;
 #[serde(rename_all = "camelCase", tag = "function")]
 pub enum Action {
     Transfer {
-        qty: u64,
-        target: String,
+        to: String,
+        amount: u64,
     },
     TransferFrom {
         from: String,
