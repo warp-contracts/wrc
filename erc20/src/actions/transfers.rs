@@ -6,7 +6,7 @@ use crate::contract_utils::handler_result::HandlerResult;
 use crate::contract_utils::js_imports::{SmartWeave, Transaction};
 
 pub fn transfer(state: State, to: String, amount: u64) -> ActionResult {
-    let caller = Transaction::owner();
+    let caller = SmartWeave::caller();
     return _transfer(state, caller, to, amount);
 }
 

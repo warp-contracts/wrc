@@ -6,7 +6,7 @@ import {
   InteractionResult,
   LoggerFactory,
   SmartWeave,
-  SmartWeaveNodeFactory,
+  SmartWeaveFactory,
   SmartWeaveTags,
 } from 'redstone-smartweave';
 import {
@@ -62,7 +62,7 @@ describe('Testing the Staking Logic', () => {
     LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    smartweave = SmartWeaveNodeFactory.memCached(arweave);
+    smartweave = SmartWeaveFactory.levelDbCached(arweave);
 
     ownerWallet = await arweave.wallets.generate();
     await addFunds(arweave, ownerWallet);

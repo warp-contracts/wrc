@@ -8,7 +8,7 @@ import {
   InteractionResult,
   LoggerFactory,
   SmartWeave,
-  SmartWeaveNodeFactory,
+  SmartWeaveFactory,
   SmartWeaveTags,
 } from 'redstone-smartweave';
 import {
@@ -58,7 +58,7 @@ describe('Testing the ERC20 Token', () => {
     LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    smartweave = SmartWeaveNodeFactory.memCached(arweave);
+    smartweave = SmartWeaveFactory.arweaveGw(arweave);
 
     ownerWallet = await arweave.wallets.generate();
     await addFunds(arweave, ownerWallet);

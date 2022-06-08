@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const { SmartWeaveNodeFactory } = require('redstone-smartweave');
+const { SmartWeaveFactory } = require('redstone-smartweave');
 const { mineBlock } = require('./utils/mine-block');
 const { loadWallet, walletAddress } = require('./utils/load-wallet');
 const { connectArweave } = require('./utils/connect-arweave');
 
 module.exports.deploy = async function (host, port, protocol, target, walletJwk) {
   const arweave = connectArweave(host, port, protocol);
-  const smartweave = SmartWeaveNodeFactory.memCached(arweave);
+  const smartweave = SmartWeaveFactory.arweaveGw(arweave)
   const wallet = await loadWallet(arweave, walletJwk, target);
   const walletAddr = await walletAddress(arweave, wallet);
   const contractSrc = fs.readFileSync(path.join(__dirname, '../../pkg/erc20-contract_bg.wasm'));
