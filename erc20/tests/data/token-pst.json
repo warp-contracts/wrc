@@ -3,6 +3,13 @@
   "owner": "uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M",
   "canEvolve": true,
   "balances": {
+    /* are you sure that u64 Rust type does not require passing the values as string?
+     At least that's how it works in AS
+
+     Also - what about max values?
+     The MAX_SAFE_INTEGER in JS is 9007199254740991
+     The u64's max value is 18446744073709551615
+     */
     "uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M": 10000000,
     "33F0QHcb22W7LwWR1iRC8Az1ntZG09XQ03YWuw2ABqA": 23111222
   }

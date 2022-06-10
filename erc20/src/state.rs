@@ -4,6 +4,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct State {
+    /*
+    shouldn't the "divisibility" or "decimals" (as in original ERC-20) be added here?
+    and used in the implementation...
+     */
     pub ticker: String,
     pub name: Option<String>,
     pub owner: String,

@@ -10,8 +10,8 @@ pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
         Allowance {
             ticker: state.ticker,
             allowance: _get_allowance(&state.allowances, &owner, &spender),
-            owner: owner,
-            spender: spender
+            owner,
+            spender
         }
     ))
 }
@@ -22,6 +22,19 @@ pub fn approve(mut state: State, spender: String, amount: u64) -> ActionResult {
     Ok(HandlerResult::NewState(state))
 }
 
+// not sure if that's the convention in Rust (i.e. prefixing private functions with _)
+// also - if that's a private function - should the "pub" modifier be removed?
+
+// https://doc.rust-lang.org/reference/visibility-and-privacy.html
+/*
+A crate needs a global available "helper module" to itself, but it doesn't want to expose the helper
+module as a public API. To accomplish this, the root of the crate's hierarchy would have a private
+module which then internally has a "public API".
+Because the entire crate is a descendant of the root, then the entire local crate can access this
+private module through the second case.
+
++ https://doc.rust-lang.org/reference/visibility-and-privacy.html#pubin-path-pubcrate-pubsuper-and-pubself
+ */
 pub fn _set_allowance(allowances: &mut HashMap<String, HashMap<String, u64>>, owner: String, spender: String, amount: u64) {
     if amount > 0 {
         *allowances

@@ -41,8 +41,10 @@ fn _transfer(mut state: State, from: String, to: String, amount: u64) -> ActionR
     }
 
     // Update target balance
-    let to_balance = *balances.get(&to).unwrap_or(&0);
-    balances.insert(to, to_balance + amount);
+    // how about?
+    *balances.entry(k).or_insert(0) += amount;
+   /* let to_balance = *balances.get(&to).unwrap_or(&0);
+    balances.insert(to, to_balance + amount);*/
 
     Ok(HandlerResult::NewState(state))
 }
