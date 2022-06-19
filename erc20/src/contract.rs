@@ -26,6 +26,16 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
     log(&("SmartWeave::caller()".to_owned() + &SmartWeave::caller()));
 
     match action {
+        /*
+        just couple of questions regarding the standard
+
+        1. are we sure we want to not include `name`, `symbol` and `decimals` method from the standard? (I know they 
+        are optional but can be useful, especially decimals - we've already experienced the need of having that one)
+
+        2. what about `tokenSupply` method? it seems obligatory
+
+        3. not really sure but maybe i'm not seeing a bigger picture - how the tokens will be minted?
+        */
         Action::Transfer { to, amount } => transfer(current_state, to, amount),
         Action::TransferFrom { from, to, amount } => transfer_from(current_state, from, to, amount),
         Action::Balance { target } => balance(current_state, target),

@@ -6,6 +6,7 @@ use crate::state::State;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", tag = "function")]
+
 pub enum Action {
     Transfer {
         to: String,

@@ -3,7 +3,7 @@ use crate::actions::allowances::{_set_allowance, _get_allowance};
 use crate::state::State;
 use crate::action::ActionResult;
 use crate::contract_utils::handler_result::HandlerResult;
-use crate::contract_utils::js_imports::{SmartWeave, Transaction};
+use crate::contract_utils::js_imports::{SmartWeave};
 
 pub fn transfer(state: State, to: String, amount: u64) -> ActionResult {
     let caller = SmartWeave::caller();
@@ -26,6 +26,8 @@ pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) ->
 }
 
 fn _transfer(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
+    //what about throwing if the from == to?
+
     // Checking if caller has enough funds
     let balances = &mut state.balances;
     let from_balance = *balances.get(&from).unwrap_or(&0);

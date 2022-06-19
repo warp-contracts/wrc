@@ -8,6 +8,7 @@ use crate::contract_utils::js_imports::{Transaction};
 pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
     Ok(QueryResponse(
         Allowance {
+            // shouldn't we stick to the standard and return solely the allowance?
             ticker: state.ticker,
             allowance: _get_allowance(&state.allowances, &owner, &spender),
             owner: owner,
@@ -17,6 +18,8 @@ pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
 }
 
 pub fn approve(mut state: State, spender: String, amount: u64) -> ActionResult {
+    //what about throwing if the caller == spender?
+
     let caller = Transaction::owner();
     _set_allowance(&mut state.allowances, caller, spender, amount);
     Ok(HandlerResult::NewState(state))

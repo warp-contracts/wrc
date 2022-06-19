@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct State {
+    // maybe symbol instead of ticker? (to be compatible with the standard)
     pub ticker: String,
     pub name: Option<String>,
     pub owner: String,
