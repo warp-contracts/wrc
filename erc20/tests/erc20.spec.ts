@@ -74,15 +74,18 @@ describe('Testing the ERC20 Token', () => {
 
 
     initialState = {
-      canEvolve: true,
-      evolve: "",
       settings: null,
-      ticker: "ERC20-test",
-      owner: owner,
+      symbol: "ERC20-test",
+      name: "Sample ERC20 token",
+      decimals: 18,
+      totalSupply: 100,
       balances: {
         [owner]: 100,
       },
-      allowances: {}
+      allowances: {},
+      owner: owner,
+      canEvolve: true,
+      evolve: "",
     };
 
     let deployedContract = await deployERC20(smartweave, initialState, ownerWallet);
@@ -114,6 +117,7 @@ describe('Testing the ERC20 Token', () => {
   it('should read erc20 state and balance data', async () => {
     expect(await erc20.currentState()).toEqual(initialState);
     expect((await erc20.balanceOf(owner)).balance).toEqual(100);
+    expect((await erc20.totalSupply()).value).toEqual(100);
   });
 
   it('should not transfer more than user balance', async () => {

@@ -18,6 +18,13 @@ export interface BalanceResult {
 }
 
 /**
+ * The result from the "totalSupply" view method on the PST Contract.
+ */
+export interface TotalSupplyResult {
+    value: number;
+}
+
+/**
  * The result from the "balance" view method on the PST Contract.
  */
 export interface AllowanceResult {
@@ -61,13 +68,19 @@ export interface EvolveState {
      * the transaction id of the Arweave transaction with the updated source code.
      */
     evolve: string;
+    /**
+     * the owner of this contract who can initiate evolution
+     */
+    owner: string;
 }
 /**
  * Interface describing base state for all PST contracts.
  */
 export interface ERC20State extends EvolveState {
-    ticker: string;
-    owner: string;
+    symbol: string;
+    name: string;
+    decimals: number;
+    totalSupply: number;
     balances: {
         [key: string]: number;
     };
@@ -115,6 +128,11 @@ export interface ERC20Contract extends Contract<ERC20State>, EvolvingContract {
     balanceOf(target: string): Promise<BalanceResult>;
 
     /**
+     * return the total supply of tokens
+     */
+    totalSupply(): Promise<TotalSupplyResult>;
+
+    /**
      * return the current balance for the given wallet
      * @param target - wallet address
      */
@@ -145,13 +163,23 @@ export interface ERC20Contract extends Contract<ERC20State>, EvolvingContract {
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
     async balanceOf(target: string): Promise<BalanceResult> {
-        const interactionResult = await this.viewState({ function: "balance", target });
+        const interactionResult = await this.viewState({ function: "balanceOf", target });
 
         if (interactionResult.type !== "ok") {
             throw Error(interactionResult.errorMessage);
         }
 
         return interactionResult.result as BalanceResult;
+    }
+
+    async totalSupply(): Promise<TotalSupplyResult> {
+        const interactionResult = await this.viewState({ function: "totalSupply" });
+
+        if (interactionResult.type !== "ok") {
+            throw Error(interactionResult.errorMessage);
+        }
+
+        return interactionResult.result as TotalSupplyResult;
     }
 
     async allowance(owner: string, spender: string): Promise<AllowanceResult> {

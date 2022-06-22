@@ -16,8 +16,10 @@ pub enum Action {
         to: String,
         amount: u64
     },
-    Balance {
+    BalanceOf {
         target: String
+    },
+    TotalSupply {
     },
     Approve {
         spender: String,
@@ -46,6 +48,9 @@ pub enum QueryResponseMsg {
             spender: String,
             allowance: u64,
     },
+    TotalSupply {
+        value: u64
+    }
 }
 
 pub type ActionResult = Result<HandlerResult<State, QueryResponseMsg>, ContractError>;
