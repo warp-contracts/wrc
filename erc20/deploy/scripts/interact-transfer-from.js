@@ -5,6 +5,7 @@ const { connectPstContract } = require('./utils/connect-pst-contract');
 const { contractTxId } = require('./utils/contract-tx-id');
 const { mineBlock } = require('./utils/mine-block');
 const {SmartWeaveNodeFactory, HandlerBasedContract} = require("redstone-smartweave");
+const {addFunds} = require("./utils/addFunds");
 
 module.exports.interactTransferFrom = async function (
     host,
@@ -21,15 +22,17 @@ module.exports.interactTransferFrom = async function (
     const targetAddress = await arweave.wallets.getAddress(targetWallet);
 
     const erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
+    const erc20FromTarget = await connectContract(arweave, targetWallet, contractTxId(target), target);
 
-    if (target == 'mainnet') {
+
+    if (target === 'mainnet') {
         const approveTx = await erc20.bundleInteraction({ function: "approve", spender: targetAddress, amount: 1},
             undefined, undefined, true // Strict mode to try dry-run first and report errors
         );
         console.log(
             `Check approve interaction at https://sonar.redstone.tools/#/app/interaction/${approveTx.originalTxId}`
         );
-        const transferTx = await erc20.bundleInteraction({
+        const transferTx = await erc20FromTarget.bundleInteraction({
                 function: "transferFrom",
                 from: walletAddress,
                 to: targetAddress,
@@ -49,7 +52,7 @@ module.exports.interactTransferFrom = async function (
         console.log('Approve tx id', approveId);
         await mineBlock(arweave);
 
-        const erc20FromTarget = await connectContract(arweave, targetWallet, contractTxId(target), target);
+        await addFunds(arweave, targetWallet);
         const transferId = await erc20FromTarget.writeInteraction({
                 function: "transferFrom",
                 from: walletAddress,

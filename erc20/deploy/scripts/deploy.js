@@ -13,15 +13,18 @@ module.exports.deploy = async function (host, port, protocol, target, walletJwk)
   const contractSrc = fs.readFileSync(path.join(__dirname, '../../pkg/erc20-contract_bg.wasm'));
 
   let initialState = {
-    canEvolve: true,
-    evolve: "",
-    settings: null,
-    ticker: "ERC20-test",
-    owner: walletAddr,
+    symbol: "ERC20-test",
+    name: "Sample ERC20 token",
+    decimals: 18,
+    totalSupply: 100,
     balances: {
       [walletAddr]: 100,
     },
-    allowances: {}
+    allowances: {},
+    settings: null,
+    owner: walletAddr,
+    canEvolve: true,
+    evolve: ""
   };
 
   const contractTxId = await smartweave.createContract.deploy(

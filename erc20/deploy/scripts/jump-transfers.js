@@ -21,7 +21,7 @@ async function jumpTransfer(
 
     console.log("Sending: " + walletAddress +   " -> " + targetAddress);
 
-    const response = await erc20.viewState({ function: "balance", target: walletAddress});
+    const response = await erc20.viewState({ function: "balanceOf", target: walletAddress});
 
     console.log("Current sender balance: " + response.result.balance);
 

@@ -19,7 +19,7 @@ module.exports.interactBalance = async function (
 
   const erc20 = await connectContract(arweave, wallet, contractTxId(target), target);
 
-  const balance = await erc20.viewState({ function: "balance", target: walletAddress});
+  const balance = await erc20.viewState({ function: "balanceOf", target: walletAddress});
 
   console.log(balance);
 };
