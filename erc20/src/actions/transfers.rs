@@ -1,9 +1,9 @@
 use crate::error::ContractError::{CallerBalanceNotEnough, CallerAllowanceNotEnough};
-use crate::actions::allowances::{_set_allowance, _get_allowance};
+use crate::actions::allowances::{__set_allowance, __get_allowance};
 use crate::state::State;
 use crate::action::ActionResult;
 use crate::contract_utils::handler_result::HandlerResult;
-use crate::contract_utils::js_imports::{SmartWeave, Transaction};
+use crate::contract_utils::js_imports::{SmartWeave};
 
 pub fn transfer(state: State, to: String, amount: u64) -> ActionResult {
     let caller = SmartWeave::caller();
@@ -14,13 +14,13 @@ pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) ->
     let caller = SmartWeave::caller();
 
     //Checking allowance
-    let allowance = _get_allowance(&state.allowances, &from, &caller);
+    let allowance = __get_allowance(&state.allowances, &from, &caller);
 
     if allowance < amount {
        return Err(CallerAllowanceNotEnough(allowance));
     }
 
-    _set_allowance(&mut state.allowances, from.to_owned(), caller, allowance - amount);
+    __set_allowance(&mut state.allowances, from.to_owned(), caller, allowance - amount);
 
     return _transfer(state, from, to, amount);
 }
@@ -41,8 +41,7 @@ fn _transfer(mut state: State, from: String, to: String, amount: u64) -> ActionR
     }
 
     // Update target balance
-    let to_balance = *balances.get(&to).unwrap_or(&0);
-    balances.insert(to, to_balance + amount);
+    *balances.entry(to).or_insert(0) += amount;
 
     Ok(HandlerResult::NewState(state))
 }

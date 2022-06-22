@@ -41,7 +41,7 @@ pub async fn stake(mut state: State, amount: u64) -> ActionResult {
             function: "transferFrom".to_string(),
             from: caller.to_owned(),
             to: contract_id,
-            amount: amount
+            amount
         })
         .unwrap(),
     )
