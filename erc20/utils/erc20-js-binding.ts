@@ -1,12 +1,13 @@
 import fs from "fs";
 import path from "path";
 
+
 import {
     ArWallet,
-    SmartWeave,
     Contract,
-    HandlerBasedContract, InteractionResult
-} from 'redstone-smartweave';
+    HandlerBasedContract,
+    Warp
+} from 'warp-contracts';
 
 /**
  * The result from the "balance" view method on the PST Contract.
@@ -54,6 +55,7 @@ export interface EvolvingContract {
      * @param newSrcTxId - result of the {@link saveNewSource} method call.
      */
     evolve(newSrcTxId: string): Promise<string | null>;
+
 }
 /**
  * Interface describing state for all Evolve-compatible contracts.
@@ -120,7 +122,7 @@ export interface ApproveInput {
  * A type of {@link Contract} designed specifically for the interaction with
  * Profit Sharing Token contract.
  */
-export interface ERC20Contract extends Contract<ERC20State>, EvolvingContract {
+export interface ERC20Contract extends Contract<ERC20State> {
     /**
      * return the current balance for the given wallet
      * @param target - wallet address
@@ -222,13 +224,13 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
 }
 
 export async function deployERC20(
-    smartweave: SmartWeave,
+    Warp: Warp,
     initialState: ERC20State,
     ownerWallet: ArWallet
 ): Promise<[ERC20State, string]> {
 
     // deploying contract using the new SDK.
-    return smartweave.createContract
+    return Warp.createContract
         .deploy({
             wallet: ownerWallet,
             initState: JSON.stringify(initialState),
@@ -240,13 +242,13 @@ export async function deployERC20(
 }
 
 export async function connectERC20(
-    smartweave: SmartWeave,
+    Warp: Warp,
     contractTxId: string,
     wallet: ArWallet
 ): Promise<ERC20Contract> {
     let contract = new ERC20ContractImpl(
         contractTxId,
-        smartweave
+        Warp
     ).setEvaluationOptions({
         internalWrites: true,
     }) as ERC20Contract;

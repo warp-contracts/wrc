@@ -1,4 +1,4 @@
-const { SmartWeaveFactory } = require('redstone-smartweave');
+const { WarpNodeFactory } = require('warp-contracts');
 
 module.exports.connectContract = async function (
   arweave,
@@ -7,11 +7,11 @@ module.exports.connectContract = async function (
   target
 ) {
   if (target === "mainnet") {
-    return SmartWeaveFactory.warpGw(arweave)
+    return WarpNodeFactory.memCachedBased(arweave).useWarpGateway().build()
         .contract(contractTxId)
         .connect(wallet);
   } else  {
-    return SmartWeaveFactory.arweaveGw(arweave)
+    return WarpNodeFactory.forTesting(arweave)
         .contract(contractTxId)
         .connect(wallet);
 

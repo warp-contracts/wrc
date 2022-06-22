@@ -1,6 +1,5 @@
 const { loadWallet } = require('./utils/load-wallet');
 const { connectArweave } = require('./utils/connect-arweave');
-const { connectPstContract } = require('./utils/connect-pst-contract');
 const { contractTxId } = require('./utils/contract-tx-id');
 const { mineBlock } = require('./utils/mine-block');
 const {connectContract} = require("./utils/connect-contract");

@@ -7,10 +7,10 @@ import {
   getTag,
   InteractionResult,
   LoggerFactory,
-  SmartWeave,
-  SmartWeaveFactory,
+  Warp,
+  WarpNodeFactory,
   SmartWeaveTags,
-} from 'redstone-smartweave';
+} from 'warp-contracts';
 import {
   connectERC20,
   deployERC20,
@@ -36,7 +36,7 @@ describe('Testing the ERC20 Token', () => {
 
   let arweave: Arweave;
   let arlocal: ArLocal;
-  let smartweave: SmartWeave;
+  let Warp: Warp;
   let erc20: ERC20Contract;
 
   let foreignContractTxId: string;
@@ -58,7 +58,7 @@ describe('Testing the ERC20 Token', () => {
     LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    smartweave = SmartWeaveFactory.arweaveGw(arweave);
+    Warp = WarpNodeFactory.forTesting(arweave);
 
     ownerWallet = await arweave.wallets.generate();
     await addFunds(arweave, ownerWallet);
@@ -88,10 +88,10 @@ describe('Testing the ERC20 Token', () => {
       evolve: "",
     };
 
-    let deployedContract = await deployERC20(smartweave, initialState, ownerWallet);
+    let deployedContract = await deployERC20(Warp, initialState, ownerWallet);
     contractTxId = deployedContract[1]
     console.log("Deployed contract: ", deployedContract);
-    erc20 = await connectERC20(smartweave, contractTxId, ownerWallet);
+    erc20 = await connectERC20(Warp, contractTxId, ownerWallet);
 
     await mineBlock(arweave);
   });
@@ -153,7 +153,7 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should not transfer from more tokens than allowed', async () => {
-    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
 
     await expect(erc20FromUser2.transferFrom({
       from: owner,
@@ -169,7 +169,7 @@ describe('Testing the ERC20 Token', () => {
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
 
 
-    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
 
     await erc20FromUser2.transferFrom({
       from: owner,
@@ -194,7 +194,7 @@ describe('Testing the ERC20 Token', () => {
     expect((await erc20.balanceOf(user3)).balance).toEqual(20);
     expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(3);
 
-    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
     await erc20FromUser2.transfer({to: user3, amount: 10});
     await mineBlock(arweave);
 
@@ -212,7 +212,7 @@ describe('Testing the ERC20 Token', () => {
     await erc20.approve({spender: user2, amount: 70 });
     await mineBlock(arweave);
 
-    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
     await erc20FromUser2.transferFrom({from: owner, to: user3, amount: 70});
     await mineBlock(arweave);
 
@@ -256,7 +256,7 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should reset user balances & allowances', async () => {
-    let erc20FromUser3 = await connectERC20(smartweave, contractTxId, user3Wallet);
+    let erc20FromUser3 = await connectERC20(Warp, contractTxId, user3Wallet);
     await erc20FromUser3.transfer({to: owner, amount: 70});
     await mineBlock(arweave);
 
@@ -272,7 +272,7 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should clean spender allowance after transfer', async () => {
-    let erc20FromUser3 = await connectERC20(smartweave, contractTxId, user3Wallet);
+    let erc20FromUser3 = await connectERC20(Warp, contractTxId, user3Wallet);
     await erc20FromUser3.transferFrom({from: owner, to: user3, amount: 30});
     await mineBlock(arweave);
 
@@ -284,7 +284,7 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should clean owner allowance after transfer if there are no spenders', async () => {
-    let erc20FromUser2 = await connectERC20(smartweave, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
     await erc20FromUser2.transferFrom({from: owner, to: user3, amount: 20});
     await mineBlock(arweave);
 

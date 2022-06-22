@@ -1,8 +1,6 @@
 const { loadWallet } = require('./utils/load-wallet');
 const { connectArweave } = require('./utils/connect-arweave');
-const { connectPstContract } = require('./utils/connect-pst-contract');
 const { contractTxId } = require('./utils/contract-tx-id');
-const { HandlerBasedContract, SmartWeaveNodeFactory} = require('redstone-smartweave');
 const {connectContract} = require("./utils/connect-contract");
 
 module.exports.interactBalance = async function (
