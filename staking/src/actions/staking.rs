@@ -3,7 +3,6 @@ use crate::error::ContractError::{TransferAmountMustBeHigherThanZero, FailedToke
 use crate::state::State;
 use crate::contract_utils::handler_result::HandlerResult;
 use crate::contract_utils::js_imports::{log, SmartWeave, Transaction, Contract};
-use crate::contract_utils::foreign_call::write_foreign_contract;
 use crate::action::{QueryResponseMsg::Stake, ActionResult};
 use crate::contract_utils::handler_result::HandlerResult::QueryResponse;
 use wasm_bindgen::JsValue;

@@ -3,10 +3,10 @@ import path from "path";
 
 import {
     ArWallet,
-    SmartWeave,
     Contract,
-    HandlerBasedContract, InteractionResult
-} from 'redstone-smartweave';
+    HandlerBasedContract,
+    Warp
+} from 'warp-contracts';
 
 /**
  * The result from the "balance" view method on the PST Contract.
@@ -64,7 +64,7 @@ export interface StakingState extends EvolveState {
  * A type of {@link Contract} designed specifically for the interaction with
  * Profit Sharing Token contract.
  */
-export interface StakingContract extends Contract<StakingState>, EvolvingContract {
+export interface StakingContract extends Contract<StakingState> {
     /**
      * return the current balance for the given wallet
      * @param target - wallet address
@@ -127,13 +127,13 @@ export class StakingContractImpl extends HandlerBasedContract<StakingState> impl
 }
 
 export async function deployStaking(
-    smartweave: SmartWeave,
+    warp: Warp,
     initialState: StakingState,
     ownerWallet: ArWallet
 ): Promise<[StakingState, string]> {
 
     // deploying contract using the new SDK.
-    return smartweave.createContract
+    return warp.createContract
         .deploy({
             wallet: ownerWallet,
             initState: JSON.stringify(initialState),
@@ -145,13 +145,13 @@ export async function deployStaking(
 }
 
 export async function connectStaking(
-    smartweave: SmartWeave,
+    warp: Warp,
     contractTxId: string,
     wallet: ArWallet
 ): Promise<StakingContract> {
     let contract = new StakingContractImpl(
         contractTxId,
-        smartweave
+        warp
     ).setEvaluationOptions({
         internalWrites: true,
     }) as StakingContract;
