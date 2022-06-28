@@ -1,4 +1,4 @@
-const { WarpNodeFactory } = require('warp-contracts');
+const { WarpFactory } = require('warp-contracts');
 
 module.exports.connectContract = async function (
   arweave,
@@ -7,11 +7,11 @@ module.exports.connectContract = async function (
   target
 ) {
   if (target === "mainnet") {
-    return WarpNodeFactory.memCachedBased(arweave).useWarpGateway().build()
+    return WarpFactory.warpGw(arweave)
         .contract(contractTxId)
         .connect(wallet);
   } else  {
-    return WarpNodeFactory.forTesting(arweave)
+    return WarpFactory.forTesting(arweave)
         .contract(contractTxId)
         .connect(wallet);
 

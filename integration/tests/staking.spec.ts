@@ -6,7 +6,7 @@ import {
   InteractionResult,
   LoggerFactory,
   Warp,
-  WarpNodeFactory,
+  WarpFactory,
   SmartWeaveTags,
 } from 'warp-contracts';
 
@@ -63,7 +63,7 @@ describe('Testing the Staking Logic', () => {
     //LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    warp = WarpNodeFactory.forTesting(arweave);
+    warp = WarpFactory.forTesting(arweave);
 
     ownerWallet = await arweave.wallets.generate();
     await addFunds(arweave, ownerWallet);

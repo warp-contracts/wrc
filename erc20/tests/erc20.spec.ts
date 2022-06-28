@@ -8,7 +8,7 @@ import {
   InteractionResult,
   LoggerFactory,
   Warp,
-  WarpNodeFactory,
+  WarpFactory,
   SmartWeaveTags,
 } from 'warp-contracts';
 import {
@@ -58,7 +58,7 @@ describe('Testing the ERC20 Token', () => {
     LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    Warp = WarpNodeFactory.forTesting(arweave);
+    Warp = WarpFactory.forTesting(arweave);
 
     ownerWallet = await arweave.wallets.generate();
     await addFunds(arweave, ownerWallet);

@@ -1,5 +1,5 @@
 const Arweave = require('arweave');
-const { SmartWeaveNodeFactory, HandlerBasedContract} = require('redstone-smartweave');
+const { WarpFactory, HandlerBasedContract} = require('warp-contracts');
 const fs = require("fs");
 const path = require("path");
 
@@ -8,9 +8,7 @@ let arweave = Arweave.init({
     port: 443,
     protocol: 'https',
 });
-const smartweave = SmartWeaveNodeFactory.memCachedBased(arweave)
-    .useRedStoneGateway()
-    .build();
+const warp = WarpFactory.warpGw(arweave);
 
 let ownerWallet, ownerAddress;
 let erc20TxIdId, stakingTxId;
@@ -28,18 +26,21 @@ async function loadWallet() {
 
 async function deployERC20() {
     let initialERC20State = {
-        canEvolve: true,
-        evolve: "",
         settings: null,
-        ticker: "ERC20-test",
-        owner: ownerAddress,
+        symbol: "ERC20-test",
+        name: "Sample ERC20 token",
+        decimals: 18,
+        totalSupply: 100,
         balances: {
             [ownerAddress]: 100,
         },
-        allowances: {}
+        allowances: {},
+        owner: ownerAddress,
+        canEvolve: true,
+        evolve: ""
     };
 
-    let erc20ContractTxId = await smartweave.createContract.deploy({
+    let erc20ContractTxId = await warp.createContract.deploy({
             wallet: ownerWallet,
             initState: JSON.stringify(initialERC20State),
             src: fs.readFileSync(path.join(__dirname, "../../erc20/pkg/erc20-contract_bg.wasm")),
@@ -61,7 +62,7 @@ async function deployStakingContract(erc20ContractTxId) {
         stakes: {}
     };
 
-    let stakingTxId = await smartweave.createContract.deploy({
+    let stakingTxId = await warp.createContract.deploy({
             wallet: ownerWallet,
             initState: JSON.stringify(initialStakingState),
             src: fs.readFileSync(path.join(__dirname, "../../staking/pkg/staking-contract_bg.wasm")),
@@ -74,8 +75,8 @@ async function deployStakingContract(erc20ContractTxId) {
 
 
 
-async function approve(erc20TxId, stakingTxId, amount) {
-    let erc20 = new HandlerBasedContract(erc20TxId, smartweave)
+async function approve(amount) {
+    let erc20 = new HandlerBasedContract(erc20TxIdId, warp)
         .setEvaluationOptions({internalWrites: true});
 
     erc20 = erc20.connect(ownerWallet);
@@ -93,7 +94,7 @@ async function approve(erc20TxId, stakingTxId, amount) {
 }
 
 async function stake(amount) {
-    let staking = new HandlerBasedContract(stakingTxId, smartweave)
+    let staking = new HandlerBasedContract(stakingTxId, warp)
         .setEvaluationOptions({internalWrites: true});
 
     staking = staking.connect(ownerWallet);
@@ -108,7 +109,7 @@ async function stake(amount) {
 
 
 async function withdraw(amount) {
-    let staking = new HandlerBasedContract(stakingTxId, smartweave)
+    let staking = new HandlerBasedContract(stakingTxId, warp)
         .setEvaluationOptions({internalWrites: true});
 
     staking = staking.connect(ownerWallet);
@@ -122,7 +123,7 @@ async function withdraw(amount) {
 }
 
 async function showStakingState() {
-    let staking = new HandlerBasedContract(stakingTxId, smartweave)
+    let staking = new HandlerBasedContract(stakingTxId, warp)
         .setEvaluationOptions({internalWrites: true});
 
     staking = staking.connect(ownerWallet);
@@ -135,23 +136,24 @@ async function showStakingState() {
 async function deploy() {
     await loadWallet()
     //let erc20TxId = await deployERC20();
-    let erc20TxId = "Y_Bk3_ViYIR405l_S40oRyi5CuJnd99O1NQPKUua9_4";
-    await deployStakingContract(erc20TxId);
+    //let erc20TxId = "Y_Bk3_ViYIR405l_S40oRyi5CuJnd99O1NQPKUua9_4";
+    await deployStakingContract(erc20TxIdId);
 }
 
-async function approveAndStake(erc20TxIdId, stakingTxId) {
+async function approveAndStake() {
     await loadWallet();
-    //await approve(erc20TxIdId, stakingTxId, 10);
-    //await stake(erc20TxIdId, stakingTxId, 1);
+    await approve(10);
     await stake(1);
-    await withdraw(1);
+    //await stake(1);
+    //await withdraw(1);
     showStakingState();
 }
 
-erc20TxIdId = "Y_Bk3_ViYIR405l_S40oRyi5CuJnd99O1NQPKUua9_4",
-stakingTxId = "FhrzoN0mVwc81O5PKZ0CMKCWrfWn1xMh9-oVIn5kE34"
+erc20TxIdId = "-Vr5jc0bpbU09yACIqTygaHvcfTR3lnKyT0TqPS3Pqc"
+stakingTxId = "7o8WypE5vdWRPHZnO_VgjYAh5zheZM28XYvORi8Zp0s"
 
 approveAndStake();
+//deploy();
 
 
 
