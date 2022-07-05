@@ -5,7 +5,7 @@ use crate::actions::balance::balance;
 use crate::actions::allowances::approve;
 use crate::actions::allowances::allowance;
 use crate::actions::evolve::evolve;
-use crate::contract_utils::js_imports::{Block, Contract, log, SmartWeave, Transaction};
+use warp_wasm_utils::contract_utils::js_imports::{Block, Contract, log, SmartWeave, Transaction};
 use crate::state::State;
 
 pub async fn handle(current_state: State, action: Action) -> ActionResult {

@@ -1,9 +1,9 @@
 use crate::state::State;
 use std::collections::HashMap;
-use crate::contract_utils::handler_result::HandlerResult;
+use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
 use crate::action::{QueryResponseMsg::Allowance, ActionResult};
-use crate::contract_utils::handler_result::HandlerResult::QueryResponse;
-use crate::contract_utils::js_imports::{Transaction};
+use warp_wasm_utils::contract_utils::handler_result::HandlerResult::QueryResponse;
+use warp_wasm_utils::contract_utils::js_imports::{Transaction};
 
 pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
     Ok(QueryResponse(

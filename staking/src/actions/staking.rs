@@ -1,11 +1,10 @@
 use serde::{Deserialize, Serialize};
 use crate::error::ContractError::{TransferAmountMustBeHigherThanZero, FailedTokenTransfer};
 use crate::state::State;
-use crate::contract_utils::handler_result::HandlerResult;
-use crate::contract_utils::js_imports::{log, SmartWeave, Transaction, Contract};
-use crate::contract_utils::foreign_call::write_foreign_contract;
+use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
+use warp_wasm_utils::contract_utils::js_imports::{SmartWeave, Transaction, Contract};
 use crate::action::{QueryResponseMsg::Stake, ActionResult};
-use crate::contract_utils::handler_result::HandlerResult::QueryResponse;
+use warp_wasm_utils::contract_utils::handler_result::HandlerResult::QueryResponse;
 use wasm_bindgen::JsValue;
 
 #[derive(Serialize)]

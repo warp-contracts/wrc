@@ -2,8 +2,8 @@ use crate::error::ContractError::{CallerBalanceNotEnough, CallerAllowanceNotEnou
 use crate::actions::allowances::{_set_allowance, _get_allowance};
 use crate::state::State;
 use crate::action::ActionResult;
-use crate::contract_utils::handler_result::HandlerResult;
-use crate::contract_utils::js_imports::{SmartWeave, Transaction};
+use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
+use warp_wasm_utils::contract_utils::js_imports::{SmartWeave};
 
 pub fn transfer(state: State, to: String, amount: u64) -> ActionResult {
     let caller = SmartWeave::caller();
