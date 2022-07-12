@@ -4,9 +4,9 @@ import path from "path";
 
 import {
     ArWallet,
-    Contract,
+    Contract, ContractData, ContractDeploy,
     HandlerBasedContract,
-    Warp
+    Warp, WriteInteractionResponse
 } from 'warp-contracts';
 
 /**
@@ -148,19 +148,19 @@ export interface ERC20Contract extends Contract<ERC20State> {
      * allows to transfer PSTs between wallets
      * @param transfer - data required to perform a transfer, see {@link transfer}
      */
-    transfer(transfer: TransferInput): Promise<string | null>;
+    transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null>;
 
     /**
      * allows transferring tokens using the allowance mechanism
      * @param transfer - data required to perform a transfer, see {@link transfer}
      */
-    transferFrom(transfer: TransferFromInput): Promise<string | null>;
+    transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null>;
 
     /**
      * approve tokens to be spent by another account between wallets
      * @param transfer - data required to perform a transfer, see {@link transfer}
      */
-    approve(transfer: ApproveInput): Promise<string | null>;
+    approve(transfer: ApproveInput): Promise<WriteInteractionResponse | null>;
 }
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
@@ -198,7 +198,7 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
         return (await super.readState()).state;
     }
 
-    async evolve(newSrcTxId: string): Promise<string | null> {
+    async evolve(newSrcTxId: string): Promise<WriteInteractionResponse | null> {
         return Promise.resolve(undefined);
     }
 
@@ -206,20 +206,25 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
         return Promise.resolve(undefined);
     }
 
-    async transfer(transfer: TransferInput): Promise<string | null> {
-        return await this.writeInteraction({ function: "transfer", ...transfer},
-            undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "transfer", ...transfer},
+            {strict: true}
         );
     }
 
-    async transferFrom(transfer: TransferFromInput): Promise<string | null> {
-        return await this.writeInteraction({ function: "transferFrom", ...transfer},
-        undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "transferFrom", ...transfer},
+            {strict: true}
         );
     }
 
-    async approve(approve: ApproveInput): Promise<string | null> {
-        return await this.writeInteraction({ function: "approve", ...approve});
+    async approve(approve: ApproveInput): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "approve", ...approve},
+            {strict: true}
+    );
     }
 }
 
@@ -227,7 +232,7 @@ export async function deployERC20(
     Warp: Warp,
     initialState: ERC20State,
     ownerWallet: ArWallet
-): Promise<[ERC20State, string]> {
+): Promise<[ERC20State, ContractDeploy]> {
 
     // deploying contract using the new SDK.
     return Warp.createContract

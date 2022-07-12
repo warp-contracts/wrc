@@ -9,7 +9,7 @@ import {
   LoggerFactory,
   Warp,
   WarpFactory,
-  SmartWeaveTags,
+  SmartWeaveTags, ContractDeploy,
 } from 'warp-contracts';
 import {
   connectERC20,
@@ -34,12 +34,10 @@ describe('Testing the ERC20 Token', () => {
 
   let initialState: ERC20State;
 
-  let arweave: Arweave;
   let arlocal: ArLocal;
-  let Warp: Warp;
+  let warp: Warp;
   let erc20: ERC20Contract;
 
-  let foreignContractTxId: string;
   let contractTxId: string;
 
   beforeAll(async () => {
@@ -48,30 +46,20 @@ describe('Testing the ERC20 Token', () => {
     arlocal = new ArLocal(1820, false);
     await arlocal.start();
 
-    arweave = Arweave.init({
-      host: 'localhost',
-      port: 1820,
-      protocol: 'http',
-    });
-
     LoggerFactory.INST.logLevel('error');
     LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    Warp = WarpFactory.forTesting(arweave);
+    warp = WarpFactory.forLocal(1820);
 
-    ownerWallet = await arweave.wallets.generate();
-    await addFunds(arweave, ownerWallet);
-    owner = await arweave.wallets.jwkToAddress(ownerWallet);
+    ownerWallet = await warp.testing.generateWallet();
+    owner = await warp.arweave.wallets.jwkToAddress(ownerWallet);
 
-    user2Wallet = await arweave.wallets.generate();
-    await addFunds(arweave, user2Wallet);
-    user2 = await arweave.wallets.jwkToAddress(user2Wallet);
+    user2Wallet = await warp.testing.generateWallet();
+    user2 = await warp.arweave.wallets.jwkToAddress(user2Wallet);
 
-    user3Wallet = await arweave.wallets.generate();
-    await addFunds(arweave, user3Wallet);
-    user3 = await arweave.wallets.jwkToAddress(user3Wallet);
-
+    user3Wallet = await warp.testing.generateWallet();
+    user3 = await warp.arweave.wallets.jwkToAddress(user3Wallet);
 
     initialState = {
       settings: null,
@@ -88,12 +76,10 @@ describe('Testing the ERC20 Token', () => {
       evolve: "",
     };
 
-    let deployedContract = await deployERC20(Warp, initialState, ownerWallet);
-    contractTxId = deployedContract[1]
+    let deployedContract = await deployERC20(warp, initialState, ownerWallet);
+    contractTxId = deployedContract[1].contractTxId;
     console.log("Deployed contract: ", deployedContract);
-    erc20 = await connectERC20(Warp, contractTxId, ownerWallet);
-
-    await mineBlock(arweave);
+    erc20 = await connectERC20(warp, contractTxId, ownerWallet);
   });
 
   afterAll(async () => {
@@ -101,11 +87,11 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should properly deploy contract', async () => {
-    const contractTx = await arweave.transactions.get(contractTxId);
+    const contractTx = await warp.arweave.transactions.get(contractTxId);
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await arweave.transactions.get(
+    const contractSrcTx = await warp.arweave.transactions.get(
       getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID)
     );
     expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual(
@@ -133,8 +119,6 @@ describe('Testing the ERC20 Token', () => {
       amount: 10,
     });
 
-    await mineBlock(arweave);
-
     expect((await erc20.currentState()).balances[owner]).toEqual(90);
     expect((await erc20.currentState()).balances[user2]).toEqual(10);
   });
@@ -147,13 +131,11 @@ describe('Testing the ERC20 Token', () => {
       amount: 20,
     });
 
-    await mineBlock(arweave);
-
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
   });
 
   it('should not transfer from more tokens than allowed', async () => {
-    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(warp, contractTxId, user2Wallet);
 
     await expect(erc20FromUser2.transferFrom({
       from: owner,
@@ -168,8 +150,7 @@ describe('Testing the ERC20 Token', () => {
     expect((await erc20.balanceOf(user3)).balance).toEqual(0);
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
 
-
-    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(warp, contractTxId, user2Wallet);
 
     await erc20FromUser2.transferFrom({
       from: owner,
@@ -177,7 +158,7 @@ describe('Testing the ERC20 Token', () => {
       amount: 20,
     });
 
-    await mineBlock(arweave);
+    
 
     let state = await erc20.currentState();
     console.log(state);
@@ -194,9 +175,8 @@ describe('Testing the ERC20 Token', () => {
     expect((await erc20.balanceOf(user3)).balance).toEqual(20);
     expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(3);
 
-    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(warp, contractTxId, user2Wallet);
     await erc20FromUser2.transfer({to: user3, amount: 10});
-    await mineBlock(arweave);
 
     expect((await erc20.balanceOf(owner)).balance).toEqual(70);
     expect((await erc20.balanceOf(user2)).balance).toEqual(0);
@@ -210,11 +190,9 @@ describe('Testing the ERC20 Token', () => {
     expect(Object.keys((await erc20.currentState()).balances)).toHaveLength(2);
 
     await erc20.approve({spender: user2, amount: 70 });
-    await mineBlock(arweave);
 
-    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(warp, contractTxId, user2Wallet);
     await erc20FromUser2.transferFrom({from: owner, to: user3, amount: 70});
-    await mineBlock(arweave);
 
     expect((await erc20.balanceOf(owner)).balance).toEqual(0);
     expect((await erc20.balanceOf(user2)).balance).toEqual(0);
@@ -225,7 +203,6 @@ describe('Testing the ERC20 Token', () => {
   it('should setup user allowances', async () => {
     await erc20.approve({spender: user2, amount: 20 });
     await erc20.approve({spender: user3, amount: 30 });
-    await mineBlock(arweave);
 
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
     expect((await erc20.allowance(owner, user3)).allowance).toEqual(30);
@@ -236,7 +213,6 @@ describe('Testing the ERC20 Token', () => {
 
   it('should clean spender allowance after approve', async () => {
     await erc20.approve({spender: user3, amount: 0 });
-    await mineBlock(arweave);
 
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
     expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
@@ -247,7 +223,6 @@ describe('Testing the ERC20 Token', () => {
 
   it('should clean owner allowance after approve if there are no spenders', async () => {
     await erc20.approve({spender: user2, amount: 0 });
-    await mineBlock(arweave);
 
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(0);
     expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
@@ -256,13 +231,11 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should reset user balances & allowances', async () => {
-    let erc20FromUser3 = await connectERC20(Warp, contractTxId, user3Wallet);
+    let erc20FromUser3 = await connectERC20(warp, contractTxId, user3Wallet);
     await erc20FromUser3.transfer({to: owner, amount: 70});
-    await mineBlock(arweave);
 
     await erc20.approve({spender: user2, amount: 20 });
     await erc20.approve({spender: user3, amount: 30 });
-    await mineBlock(arweave);
 
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
     expect((await erc20.allowance(owner, user3)).allowance).toEqual(30);
@@ -272,9 +245,8 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should clean spender allowance after transfer', async () => {
-    let erc20FromUser3 = await connectERC20(Warp, contractTxId, user3Wallet);
+    let erc20FromUser3 = await connectERC20(warp, contractTxId, user3Wallet);
     await erc20FromUser3.transferFrom({from: owner, to: user3, amount: 30});
-    await mineBlock(arweave);
 
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(20);
     expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
@@ -284,9 +256,8 @@ describe('Testing the ERC20 Token', () => {
   });
 
   it('should clean owner allowance after transfer if there are no spenders', async () => {
-    let erc20FromUser2 = await connectERC20(Warp, contractTxId, user2Wallet);
+    let erc20FromUser2 = await connectERC20(warp, contractTxId, user2Wallet);
     await erc20FromUser2.transferFrom({from: owner, to: user3, amount: 20});
-    await mineBlock(arweave);
 
     expect((await erc20.allowance(owner, user2)).allowance).toEqual(0);
     expect((await erc20.allowance(owner, user3)).allowance).toEqual(0);
