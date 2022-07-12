@@ -3,9 +3,9 @@ import path from "path";
 
 import {
     ArWallet,
-    Contract,
+    Contract, ContractDeploy,
     HandlerBasedContract,
-    Warp
+    Warp, WriteInteractionResponse
 } from 'warp-contracts';
 
 /**
@@ -79,13 +79,13 @@ export interface StakingContract extends Contract<StakingState> {
      * stake ERC0 tokens
      * @param amount - amount of tokens to stake
      */
-    stake(amount: number): Promise<string | null>;
+    stake(amount: number): Promise<WriteInteractionResponse | null>;
 
     /**
      * withdraws ERC20 tokens
      * @param transfer - amount of tokens to withdraw
      */
-    withdraw(amount: number): Promise<string | null>;
+    withdraw(amount: number): Promise<WriteInteractionResponse | null>;
 }
 
 export class StakingContractImpl extends HandlerBasedContract<StakingState> implements StakingContract {
@@ -100,25 +100,23 @@ export class StakingContractImpl extends HandlerBasedContract<StakingState> impl
         return interactionResult.result as StakeResult;
     }
 
-    async stake(amount: number): Promise<string | null> {
-        return await this.writeInteraction({ function: "stake", amount},
-            undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async stake(amount: number): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "stake", amount},
+            {strict: true} // Strict mode to try dry-run first and report errors
         );
     }
 
-    async withdraw(amount: number): Promise<string | null> {
-        return await this.writeInteraction({ function: "withdraw", amount},
-            undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async withdraw(amount: number): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "withdraw", amount},
+            {strict: true} // Strict mode to try dry-run first and report errors
         );
     }
 
     async currentState() {
         console.log("Getting current state from staking");
         return (await super.readState()).state;
-    }
-
-    async evolve(newSrcTxId: string): Promise<string | null> {
-        return Promise.resolve(undefined);
     }
 
     saveNewSource(newContractSource: string): Promise<string | null> {
@@ -130,7 +128,7 @@ export async function deployStaking(
     warp: Warp,
     initialState: StakingState,
     ownerWallet: ArWallet
-): Promise<[StakingState, string]> {
+): Promise<[StakingState, ContractDeploy]> {
 
     // deploying contract using the new SDK.
     return warp.createContract
@@ -142,6 +140,7 @@ export async function deployStaking(
             wasmGlueCode: path.join(__dirname, "../pkg/staking-contract.js"),
         })
         .then((txId) => [initialState, txId]);
+
 }
 
 export async function connectStaking(

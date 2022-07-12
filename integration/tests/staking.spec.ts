@@ -1,5 +1,4 @@
 import ArLocal from 'arlocal';
-import Arweave from 'arweave';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import {
   getTag,
@@ -23,7 +22,6 @@ import {
   StakingContract,
   StakingState
 } from '../../staking/tests/staking-js-binding';
-import { addFunds, mineBlock } from './utils';
 
 jest.setTimeout(30000);
 
@@ -38,7 +36,6 @@ describe('Testing the Staking Logic', () => {
   let initialERC20State: ERC20State;
   let initialStakingState: StakingState;
 
-  let arweave: Arweave;
   let arlocal: ArLocal;
   let warp: Warp;
   let erc20: ERC20Contract;
@@ -53,29 +50,20 @@ describe('Testing the Staking Logic', () => {
     arlocal = new ArLocal(1820, false);
     await arlocal.start();
 
-    arweave = Arweave.init({
-      host: 'localhost',
-      port: 1820,
-      protocol: 'http',
-    });
-
     LoggerFactory.INST.logLevel('error');
     //LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    warp = WarpFactory.forTesting(arweave);
+    warp = WarpFactory.forLocal();
 
-    ownerWallet = await arweave.wallets.generate();
-    await addFunds(arweave, ownerWallet);
-    owner = await arweave.wallets.jwkToAddress(ownerWallet);
+    ownerWallet = await warp.testing.generateWallet();
+    owner = await warp.arweave.wallets.jwkToAddress(ownerWallet);
 
-    user1Wallet = await arweave.wallets.generate();
-    await addFunds(arweave, user1Wallet);
-    user1 = await arweave.wallets.jwkToAddress(user1Wallet);
+    user1Wallet = await warp.testing.generateWallet();
+    user1 = await warp.arweave.wallets.jwkToAddress(user1Wallet);
 
-    user2Wallet = await arweave.wallets.generate();
-    await addFunds(arweave, user2Wallet);
-    user2 = await arweave.wallets.jwkToAddress(user2Wallet);
+    user2Wallet = await warp.testing.generateWallet();
+    user2 = await warp.arweave.wallets.jwkToAddress(user2Wallet);
 
     initialERC20State = {
       settings: null,
@@ -93,7 +81,7 @@ describe('Testing the Staking Logic', () => {
     };
 
     let deployedERC20Contract = await deployERC20(warp, initialERC20State, ownerWallet);
-    erc20ContractTxId = deployedERC20Contract[1]
+    erc20ContractTxId = deployedERC20Contract[1].contractTxId;;
     console.log("Deployed ERC20 contract: ", deployedERC20Contract);
     erc20 = await connectERC20(warp, erc20ContractTxId, user1Wallet);
 
@@ -107,11 +95,10 @@ describe('Testing the Staking Logic', () => {
     };
 
     let deployedStakingContract = await deployStaking(warp, initialStakingState, ownerWallet);
-    stakingContractTxId = deployedStakingContract[1]
+    stakingContractTxId = deployedStakingContract[1].contractTxId;
     console.log("Deployed staking contract: ", deployedStakingContract);
     staking = await connectStaking(warp, stakingContractTxId, user1Wallet);
 
-    await mineBlock(arweave);
   });
 
   afterAll(async () => {
@@ -119,11 +106,11 @@ describe('Testing the Staking Logic', () => {
   });
 
   it('should properly deploy contract ERC20 contract', async () => {
-    const contractTx = await arweave.transactions.get(erc20ContractTxId);
+    const contractTx = await warp.arweave.transactions.get(erc20ContractTxId);
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await arweave.transactions.get(
+    const contractSrcTx = await warp.arweave.transactions.get(
       getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID)
     );
     expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual(
@@ -135,11 +122,11 @@ describe('Testing the Staking Logic', () => {
   });
 
   it('should properly deploy staking contract', async () => {
-    const contractTx = await arweave.transactions.get(stakingContractTxId);
+    const contractTx = await warp.arweave.transactions.get(stakingContractTxId);
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await arweave.transactions.get(
+    const contractSrcTx = await warp.arweave.transactions.get(
         getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID)
     );
     expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual(
@@ -162,8 +149,6 @@ describe('Testing the Staking Logic', () => {
       amount: 120,
     });
 
-    await mineBlock(arweave);
-
     expect((await erc20.allowance(user1, stakingContractTxId)).allowance).toEqual(120);
   });
 
@@ -181,8 +166,6 @@ describe('Testing the Staking Logic', () => {
       spender: stakingContractTxId,
       amount: 50,
     });
-
-    await mineBlock(arweave);
 
     expect((await erc20.balanceOf(user1)).balance).toEqual(100);
     expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(0);
@@ -203,8 +186,6 @@ describe('Testing the Staking Logic', () => {
     expect((await staking.stakeOf(user1)).stake).toEqual(0);
 
     await staking.stake(10);
-
-    await mineBlock(arweave);
 
     expect((await erc20.balanceOf(user1)).balance).toEqual(90);
     expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(10);

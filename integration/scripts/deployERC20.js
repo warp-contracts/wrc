@@ -1,22 +1,12 @@
-const Arweave = require('arweave');
-const { WarpFactory, HandlerBasedContract} = require('warp-contracts');
-const fs = require("fs");
-const path = require("path");
-const {saveContractId, loadWallet} = require('./utils.js');
-
-let arweave = Arweave.init({
-    host: 'arweave.net',
-    port: 443,
-    protocol: 'https',
-});
-const warp = WarpFactory.warpGw(arweave);
-
-let ownerWallet, ownerAddress;
+const fs = require('fs');
+const path = require('path');
+const { getWarp, setContractTxId, loadWallet, getNetwork } = require('./utils');
 
 //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-async function deployERC20() {
-    [ownerWallet, ownerAddress] = await loadWallet()
+(async () => {
+    const warp = getWarp();
+    const [ownerWallet, ownerAddress] = await loadWallet(warp, true);
 
     let initialERC20State = {
         settings: null,
@@ -33,21 +23,18 @@ async function deployERC20() {
         evolve: ""
     };
 
-    let erc20ContractTxId = await warp.createContract.deploy({
+    let deployment = await warp.createContract.deploy({
         wallet: ownerWallet,
         initState: JSON.stringify(initialERC20State),
         src: fs.readFileSync(path.join(__dirname, "../../erc20/pkg/erc20-contract_bg.wasm")),
         wasmSrcCodeDir: path.join(__dirname, "../../erc20/src"),
         wasmGlueCode: path.join(__dirname, "../../erc20/pkg/erc20-contract.js"),
-    }, true);
+    });
 
-    console.log("Deployed ERC20 contract: ", erc20ContractTxId);
+    console.log("Deployed ERC20 contract: ", deployment.contractTxId);
 
-    saveContractId("erc20", erc20ContractTxId)
-}
-
-deployERC20();
-
+    setContractTxId(warp.environment, "erc20", deployment.contractTxId)
+})();
 
 
 

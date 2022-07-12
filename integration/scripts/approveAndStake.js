@@ -1,87 +1,66 @@
-const Arweave = require('arweave');
-const { WarpFactory, HandlerBasedContract} = require('warp-contracts');
+const {getWarp, loadWallet, getContractTxId} = require("./utils");
 
-const {loadContractTxId, loadWallet} = require('./utils.js');
 
-let arweave = Arweave.init({
-    host: 'arweave.net',
-    port: 443,
-    protocol: 'https',
-});
-
-const warp = WarpFactory.warpGw(arweave);
-
-let ownerWallet, ownerAddress;
-let erc20TxId, stakingTxId;
 
 
 //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-async function approve(amount) {
-    let erc20 = new HandlerBasedContract(erc20TxId, warp)
-        .setEvaluationOptions({internalWrites: true});
+async function approve(erc20, stakingTxId, amount) {
+    console.log("Approving: " + stakingTxId + " for: " + amount);
+    let interaction = await erc20.writeInteraction(
+        {function: "approve", spender: stakingTxId, amount: amount},
+        {strict: true}
+    );
 
-    erc20 = erc20.connect(ownerWallet);
-
-    let tx = await erc20.bundleInteraction({ function: "approve", spender: stakingTxId, amount: amount},
-        undefined, true // Strict mode to try dry-run first and report errors
-    )
-
-    console.log("Transaction sent: " + tx.originalTxId);
-    console.log(tx);
+    console.log("Approval transaction sent: " + interaction.originalTxId);
 }
 
-async function stake(amount) {
-    let staking = new HandlerBasedContract(stakingTxId, warp)
-        .setEvaluationOptions({internalWrites: true});
+async function stake(staking, amount) {
+    let interaction = await staking.writeInteraction(
+        {function: "stake", amount},
+        // Uncomment this line to reproduce the error
+        //{strict: true}
+    );
 
-    staking = staking.connect(ownerWallet);
-
-    let tx = await staking.bundleInteraction({ function: "stake", amount: amount},
-        undefined, true // Strict mode to try dry-run first and report errors
-    )
-
-    console.log("Transaction sent: " + tx.originalTxId);
-    console.log(tx);
+    console.log("Staking transaction sent: " + interaction.originalTxId);
 }
 
 
-async function withdraw(amount) {
-    let staking = new HandlerBasedContract(stakingTxId, warp)
-        .setEvaluationOptions({internalWrites: true});
+async function withdraw(staking, amount) {
+    let interaction = await staking.writeInteraction(
+        {function: "withdraw", amount},
+        {strict: true}
+    );
 
-    staking = staking.connect(ownerWallet);
-
-    let tx = await staking.bundleInteraction({ function: "withdraw", amount: amount},
-        undefined, true // Strict mode to try dry-run first and report errors
-    )
-
-    console.log("Transaction sent: " + tx.originalTxId);
-    console.log(tx);
+    console.log("Withdrawal transaction sent: " + interaction.originalTxId);
 }
 
-async function showStakingState() {
-    let staking = new HandlerBasedContract(stakingTxId, warp)
-        .setEvaluationOptions({internalWrites: true});
-
-    //const staking = warp.contract("x_BaQLFyaEnROLhSUYOfn3nG_wZ3knA_3hAeKLw1lNk");
-
-    staking = staking.connect(ownerWallet);
-
-    console.log("Current Staking state:");
-    let state = await staking.readState();
-    console.log(JSON.stringify(state, null, " "));
+async function showContractState(contract) {
+    const state = await contract.readState();
+    console.log(JSON.stringify(state, null, 2));
 }
 
 async function approveAndStake() {
-    [ownerWallet, ownerAddress] = await loadWallet();
-    erc20TxId = loadContractTxId("erc20");
-    stakingTxId = loadContractTxId("staking");
-    await approve(10);
-    await stake(1);
-    //await stake(1);
-    //await withdraw(1);
-    showStakingState();
+    let warp = getWarp();
+    [ownerWallet, ownerAddress] = await loadWallet(warp, );
+
+    const erc20 = warp.contract(getContractTxId(warp.environment, "erc20"))
+                      .setEvaluationOptions({internalWrites: true})
+                      .connect(ownerWallet);
+
+    const stakingTxId = getContractTxId(warp.environment, "staking");
+    const staking = warp.contract(stakingTxId)
+                        .setEvaluationOptions({internalWrites: true})
+                        .connect(ownerWallet);
+
+    await approve(erc20, stakingTxId, 5);
+    await stake(staking, 1);
+    await stake(staking, 1);
+    await stake(staking, 1);
+    await withdraw(staking, 1);
+
+    await showContractState(erc20);
+    await showContractState(staking);
 }
 
 approveAndStake();

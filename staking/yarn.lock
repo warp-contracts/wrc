@@ -6435,10 +6435,10 @@ walker@^1.0.7:
   dependencies:
     makeerror "1.0.12"
 
-warp-contracts@1.2.0-beta.1:
-  version "1.2.0-beta.1"
-  resolved "https://registry.yarnpkg.com/warp-contracts/-/warp-contracts-1.2.0-beta.1.tgz#c92350dab1e4a60119c3682efa985922bf1c04fd"
-  integrity sha512-MT1yu31CS17rLbzuELMwGCtUTZ+/bC78XSmQ61z/IDUpfw/LWNIcQw17UkbqdvLoWbX8SZMfnxXCyQiW9M3LeA==
+warp-contracts@1.2.0-beta.3:
+  version "1.2.0-beta.3"
+  resolved "https://registry.yarnpkg.com/warp-contracts/-/warp-contracts-1.2.0-beta.3.tgz#3c223d1af8064ffd4a4a59954cb2412b01cede81"
+  integrity sha512-V0MzK2nhGouonMOUvbWODDNFAjrMdzOwTdNnQKrjn+EbMAEY6Ky19w5oZGC3HJf3VyGpn5RxivhlDHEV8DZLjA==
   dependencies:
     "@assemblyscript/loader" "^0.19.23"
     "@idena/vrf-js" "^1.0.1"
