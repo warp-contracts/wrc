@@ -9,15 +9,17 @@ approval -> transferFrom flow of tokens.
 
 #### Go into the `erc20` directory and run
 
-`
+```
+yarn install
 yarn build
-`
+```
 
 #### If you want to run integration tests - go into the `staking` directory and run
 
-`
+```
+yarn install
 yarn build
-`
+```
 
 ## Running tests
 
@@ -40,10 +42,19 @@ yarn test
 
 ## Deploying and testing contracts on different networks
 
+The scripts are located in the `staking` directory
+
+
 All of the testing scripts should be invoked with a `--network` parameter specifying one of the 3 possible networks:
 * mainnet
 * testnet
 * local
+
+Please install all the necessary dependencies first
+
+```
+yarn install
+```
 
 
 #### Integration tests

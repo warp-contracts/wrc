@@ -42,9 +42,13 @@ module.exports.loadWallet = async function (
 ) {
     let wallet;
     let walletFilename = path.join(__dirname, `../scripts/.secrets/wallet_${warp.environment}.json`);
-    if (generate && (warp.environment === 'local' || warp.environment === 'testnet')) {
-        console.log("GENERATING test env wallet");
-        wallet = await warp.testing.generateWallet();
+    if (generate) {
+        console.log("GENERATING wallet");
+        if (warp.environment === 'local' || warp.environment === 'testnet') {
+            wallet = await warp.testing.generateWallet();
+        } else {
+            wallet = await warp.arweave.wallets.generate();
+        }
         fs.writeFileSync(walletFilename, JSON.stringify(wallet));
     } else {
         try {
