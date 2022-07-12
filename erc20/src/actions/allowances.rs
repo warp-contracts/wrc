@@ -8,21 +8,24 @@ use crate::contract_utils::js_imports::{Transaction};
 pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
     Ok(QueryResponse(
         Allowance {
-            ticker: state.ticker,
-            allowance: _get_allowance(&state.allowances, &owner, &spender),
-            owner: owner,
-            spender: spender
+            ticker: state.symbol,
+            allowance: __get_allowance(&state.allowances, &owner, &spender),
+            owner,
+            spender
         }
     ))
 }
 
 pub fn approve(mut state: State, spender: String, amount: u64) -> ActionResult {
     let caller = Transaction::owner();
-    _set_allowance(&mut state.allowances, caller, spender, amount);
+    __set_allowance(&mut state.allowances, caller, spender, amount);
     Ok(HandlerResult::NewState(state))
 }
 
-pub fn _set_allowance(allowances: &mut HashMap<String, HashMap<String, u64>>, owner: String, spender: String, amount: u64) {
+//Following: https://users.rust-lang.org/t/use-of-pub-for-non-public-apis/40480
+// Not a part of the contract API - used internally within the crate.
+#[doc(hidden)]
+pub fn __set_allowance(allowances: &mut HashMap<String, HashMap<String, u64>>, owner: String, spender: String, amount: u64) {
     if amount > 0 {
         *allowances
             .entry(owner)
@@ -42,7 +45,10 @@ pub fn _set_allowance(allowances: &mut HashMap<String, HashMap<String, u64>>, ow
     }
 }
 
-pub fn _get_allowance(allowances: &HashMap<String, HashMap<String, u64>>, owner: &String, spender: &String) -> u64 {
+//Following: https://users.rust-lang.org/t/use-of-pub-for-non-public-apis/40480
+// Not a part of the contract API - used internally within the crate.
+#[doc(hidden)]
+pub fn __get_allowance(allowances: &HashMap<String, HashMap<String, u64>>, owner: &String, spender: &String) -> u64 {
     return *allowances
         .get(owner)
         .map_or(&0, |spenders| {

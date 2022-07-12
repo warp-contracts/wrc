@@ -3,10 +3,10 @@ import path from "path";
 
 import {
     ArWallet,
-    SmartWeave,
-    Contract,
-    HandlerBasedContract, InteractionResult
-} from 'redstone-smartweave';
+    Contract, ContractDeploy,
+    HandlerBasedContract,
+    Warp, WriteInteractionResponse
+} from 'warp-contracts';
 
 /**
  * The result from the "balance" view method on the PST Contract.
@@ -64,7 +64,7 @@ export interface StakingState extends EvolveState {
  * A type of {@link Contract} designed specifically for the interaction with
  * Profit Sharing Token contract.
  */
-export interface StakingContract extends Contract<StakingState>, EvolvingContract {
+export interface StakingContract extends Contract<StakingState> {
     /**
      * return the current balance for the given wallet
      * @param target - wallet address
@@ -79,13 +79,13 @@ export interface StakingContract extends Contract<StakingState>, EvolvingContrac
      * stake ERC0 tokens
      * @param amount - amount of tokens to stake
      */
-    stake(amount: number): Promise<string | null>;
+    stake(amount: number): Promise<WriteInteractionResponse | null>;
 
     /**
      * withdraws ERC20 tokens
      * @param transfer - amount of tokens to withdraw
      */
-    withdraw(amount: number): Promise<string | null>;
+    withdraw(amount: number): Promise<WriteInteractionResponse | null>;
 }
 
 export class StakingContractImpl extends HandlerBasedContract<StakingState> implements StakingContract {
@@ -100,15 +100,17 @@ export class StakingContractImpl extends HandlerBasedContract<StakingState> impl
         return interactionResult.result as StakeResult;
     }
 
-    async stake(amount: number): Promise<string | null> {
-        return await this.writeInteraction({ function: "stake", amount},
-            undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async stake(amount: number): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "stake", amount},
+            {strict: true} // Strict mode to try dry-run first and report errors
         );
     }
 
-    async withdraw(amount: number): Promise<string | null> {
-        return await this.writeInteraction({ function: "withdraw", amount},
-            undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async withdraw(amount: number): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "withdraw", amount},
+            {strict: true} // Strict mode to try dry-run first and report errors
         );
     }
 
@@ -117,23 +119,19 @@ export class StakingContractImpl extends HandlerBasedContract<StakingState> impl
         return (await super.readState()).state;
     }
 
-    async evolve(newSrcTxId: string): Promise<string | null> {
-        return Promise.resolve(undefined);
-    }
-
     saveNewSource(newContractSource: string): Promise<string | null> {
         return Promise.resolve(undefined);
     }
 }
 
 export async function deployStaking(
-    smartweave: SmartWeave,
+    warp: Warp,
     initialState: StakingState,
     ownerWallet: ArWallet
-): Promise<[StakingState, string]> {
+): Promise<[StakingState, ContractDeploy]> {
 
     // deploying contract using the new SDK.
-    return smartweave.createContract
+    return warp.createContract
         .deploy({
             wallet: ownerWallet,
             initState: JSON.stringify(initialState),
@@ -142,16 +140,17 @@ export async function deployStaking(
             wasmGlueCode: path.join(__dirname, "../pkg/staking-contract.js"),
         })
         .then((txId) => [initialState, txId]);
+
 }
 
 export async function connectStaking(
-    smartweave: SmartWeave,
+    warp: Warp,
     contractTxId: string,
     wallet: ArWallet
 ): Promise<StakingContract> {
     let contract = new StakingContractImpl(
         contractTxId,
-        smartweave
+        warp
     ).setEvaluationOptions({
         internalWrites: true,
     }) as StakingContract;

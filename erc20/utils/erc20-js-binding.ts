@@ -1,12 +1,13 @@
 import fs from "fs";
 import path from "path";
 
+
 import {
     ArWallet,
-    SmartWeave,
-    Contract,
-    HandlerBasedContract, InteractionResult
-} from 'redstone-smartweave';
+    Contract, ContractData, ContractDeploy,
+    HandlerBasedContract,
+    Warp, WriteInteractionResponse
+} from 'warp-contracts';
 
 /**
  * The result from the "balance" view method on the PST Contract.
@@ -15,6 +16,13 @@ export interface BalanceResult {
     balance: number;
     ticker: string;
     target: string;
+}
+
+/**
+ * The result from the "totalSupply" view method on the PST Contract.
+ */
+export interface TotalSupplyResult {
+    value: number;
 }
 
 /**
@@ -47,6 +55,7 @@ export interface EvolvingContract {
      * @param newSrcTxId - result of the {@link saveNewSource} method call.
      */
     evolve(newSrcTxId: string): Promise<string | null>;
+
 }
 /**
  * Interface describing state for all Evolve-compatible contracts.
@@ -61,13 +70,19 @@ export interface EvolveState {
      * the transaction id of the Arweave transaction with the updated source code.
      */
     evolve: string;
+    /**
+     * the owner of this contract who can initiate evolution
+     */
+    owner: string;
 }
 /**
  * Interface describing base state for all PST contracts.
  */
 export interface ERC20State extends EvolveState {
-    ticker: string;
-    owner: string;
+    symbol: string;
+    name: string;
+    decimals: number;
+    totalSupply: number;
     balances: {
         [key: string]: number;
     };
@@ -107,12 +122,17 @@ export interface ApproveInput {
  * A type of {@link Contract} designed specifically for the interaction with
  * Profit Sharing Token contract.
  */
-export interface ERC20Contract extends Contract<ERC20State>, EvolvingContract {
+export interface ERC20Contract extends Contract<ERC20State> {
     /**
      * return the current balance for the given wallet
      * @param target - wallet address
      */
     balanceOf(target: string): Promise<BalanceResult>;
+
+    /**
+     * return the total supply of tokens
+     */
+    totalSupply(): Promise<TotalSupplyResult>;
 
     /**
      * return the current balance for the given wallet
@@ -128,30 +148,40 @@ export interface ERC20Contract extends Contract<ERC20State>, EvolvingContract {
      * allows to transfer PSTs between wallets
      * @param transfer - data required to perform a transfer, see {@link transfer}
      */
-    transfer(transfer: TransferInput): Promise<string | null>;
+    transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null>;
 
     /**
      * allows transferring tokens using the allowance mechanism
      * @param transfer - data required to perform a transfer, see {@link transfer}
      */
-    transferFrom(transfer: TransferFromInput): Promise<string | null>;
+    transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null>;
 
     /**
      * approve tokens to be spent by another account between wallets
      * @param transfer - data required to perform a transfer, see {@link transfer}
      */
-    approve(transfer: ApproveInput): Promise<string | null>;
+    approve(transfer: ApproveInput): Promise<WriteInteractionResponse | null>;
 }
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
     async balanceOf(target: string): Promise<BalanceResult> {
-        const interactionResult = await this.viewState({ function: "balance", target });
+        const interactionResult = await this.viewState({ function: "balanceOf", target });
 
         if (interactionResult.type !== "ok") {
             throw Error(interactionResult.errorMessage);
         }
 
         return interactionResult.result as BalanceResult;
+    }
+
+    async totalSupply(): Promise<TotalSupplyResult> {
+        const interactionResult = await this.viewState({ function: "totalSupply" });
+
+        if (interactionResult.type !== "ok") {
+            throw Error(interactionResult.errorMessage);
+        }
+
+        return interactionResult.result as TotalSupplyResult;
     }
 
     async allowance(owner: string, spender: string): Promise<AllowanceResult> {
@@ -168,7 +198,7 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
         return (await super.readState()).state;
     }
 
-    async evolve(newSrcTxId: string): Promise<string | null> {
+    async evolve(newSrcTxId: string): Promise<WriteInteractionResponse | null> {
         return Promise.resolve(undefined);
     }
 
@@ -176,31 +206,36 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
         return Promise.resolve(undefined);
     }
 
-    async transfer(transfer: TransferInput): Promise<string | null> {
-        return await this.writeInteraction({ function: "transfer", ...transfer},
-            undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "transfer", ...transfer},
+            {strict: true}
         );
     }
 
-    async transferFrom(transfer: TransferFromInput): Promise<string | null> {
-        return await this.writeInteraction({ function: "transferFrom", ...transfer},
-        undefined, undefined, true // Strict mode to try dry-run first and report errors
+    async transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "transferFrom", ...transfer},
+            {strict: true}
         );
     }
 
-    async approve(approve: ApproveInput): Promise<string | null> {
-        return await this.writeInteraction({ function: "approve", ...approve});
+    async approve(approve: ApproveInput): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "approve", ...approve},
+            {strict: true}
+    );
     }
 }
 
 export async function deployERC20(
-    smartweave: SmartWeave,
+    Warp: Warp,
     initialState: ERC20State,
     ownerWallet: ArWallet
-): Promise<[ERC20State, string]> {
+): Promise<[ERC20State, ContractDeploy]> {
 
     // deploying contract using the new SDK.
-    return smartweave.createContract
+    return Warp.createContract
         .deploy({
             wallet: ownerWallet,
             initState: JSON.stringify(initialState),
@@ -212,13 +247,13 @@ export async function deployERC20(
 }
 
 export async function connectERC20(
-    smartweave: SmartWeave,
+    Warp: Warp,
     contractTxId: string,
     wallet: ArWallet
 ): Promise<ERC20Contract> {
     let contract = new ERC20ContractImpl(
         contractTxId,
-        smartweave
+        Warp
     ).setEvaluationOptions({
         internalWrites: true,
     }) as ERC20Contract;
