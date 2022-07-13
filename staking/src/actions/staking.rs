@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
-use crate::error::ContractError::{TransferAmountMustBeHigherThanZero, FailedTokenTransfer};
+use crate::error::ContractError::{WithdrawalAmountMustBeHigherThanZero, StakingAmountMustBeHigherThanZero, FailedTokenTransfer, RuntimeError};
 use crate::state::State;
+use crate::erc20::ERC20State;
 use crate::contract_utils::handler_result::HandlerResult;
 use crate::contract_utils::js_imports::{log, SmartWeave, Transaction, Contract};
 use crate::action::{QueryResponseMsg::Stake, ActionResult};
@@ -33,7 +34,7 @@ struct Result {
 
 pub async fn stake(mut state: State, amount: u64) -> ActionResult {
     if amount == 0 {
-        return Err(TransferAmountMustBeHigherThanZero);
+        return Err(StakingAmountMustBeHigherThanZero);
     }
 
     let caller = Transaction::owner();
@@ -65,9 +66,32 @@ pub async fn stake(mut state: State, amount: u64) -> ActionResult {
     Ok(HandlerResult::NewState(state))
 }
 
+pub async fn stake_all(mut state: State) -> ActionResult {
+    let caller = Transaction::owner();
+
+    let result = SmartWeave::read_contract_state(&state.token.to_string()).await;
+    let erc20_state: ERC20State = result.into_serde().unwrap();
+    let amount = *erc20_state.balances.get(&caller).unwrap_or(&0);
+
+    stake(state, amount).await
+}
+
+pub async fn re_stake(mut state: State) -> ActionResult {
+    let caller = Transaction::owner();
+    let current_stake = *state.stakes.get( & caller).unwrap_or(&0);
+
+    match withdraw(state, current_stake).await {
+        Err(e) => return Err(e),
+        Ok(result) => match result {
+            HandlerResult::NewState(new_state) => stake_all(new_state).await,
+            _ => Err(RuntimeError("Unexpected result from staking".to_string()))
+        }
+    }
+}
+
 pub async fn withdraw(mut state: State, amount: u64) -> ActionResult {
     if amount == 0 {
-        return Err(TransferAmountMustBeHigherThanZero);
+        return Err(WithdrawalAmountMustBeHigherThanZero);
     }
 
     let caller = Transaction::owner();
