@@ -1,4 +1,4 @@
-const {WarpFactory} = require("warp-contracts");
+const {WarpFactory, defaultCacheOptions} = require("warp-contracts");
 const path = require("path");
 const fs = require("fs");
 const yargs = require('yargs/yargs');
@@ -31,7 +31,7 @@ module.exports.getWarp = function() {
     } else if (network == 'testnet') {
         return WarpFactory.forTestnet();
     } else if (network == 'mainnet') {
-        return WarpFactory.forMainnet();
+        return WarpFactory.forMainnet({...defaultCacheOptions, inMemory: true});
     } else {
         throw new Error("Unknown network: " + network);
     }
