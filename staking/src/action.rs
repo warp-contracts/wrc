@@ -17,6 +17,8 @@ pub enum Action {
     StakeOf {
         target: String
     },
+    StakeAll {},
+    ReStake {}
 }
 
 #[derive(Serialize, Deserialize)]

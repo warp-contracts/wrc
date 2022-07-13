@@ -4,7 +4,8 @@ use serde::Serialize;
 pub enum ContractError {
   FailedTokenTransfer(String),
   RuntimeError(String),
-  TransferAmountMustBeHigherThanZero,
+  StakingAmountMustBeHigherThanZero,
+  WithdrawalAmountMustBeHigherThanZero,
   EvolveNotAllowed,
   OnlyOwnerCanEvolve
 }

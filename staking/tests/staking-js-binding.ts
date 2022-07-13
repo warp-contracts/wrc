@@ -75,11 +75,24 @@ export interface StakingContract extends Contract<StakingState> {
      * returns the current contract state
      */
     currentState(): Promise<StakingState>;
+
     /**
      * stake ERC0 tokens
      * @param amount - amount of tokens to stake
      */
     stake(amount: number): Promise<WriteInteractionResponse | null>;
+
+    /**
+     * stake all the ERC0 tokens owned
+     * @param amount - amount of tokens to stake
+     */
+    stakeAll(): Promise<WriteInteractionResponse | null>;
+
+    /**
+     * Returns staked tokens and stake all tokens owned
+     * @param amount - amount of tokens to stake
+     */
+    reStake(): Promise<WriteInteractionResponse | null>;
 
     /**
      * withdraws ERC20 tokens
@@ -103,6 +116,20 @@ export class StakingContractImpl extends HandlerBasedContract<StakingState> impl
     async stake(amount: number): Promise<WriteInteractionResponse | null> {
         return await this.writeInteraction(
             { function: "stake", amount},
+            {strict: true} // Strict mode to try dry-run first and report errors
+        );
+    }
+
+    async stakeAll(): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "stakeAll"},
+            {strict: true} // Strict mode to try dry-run first and report errors
+        );
+    }
+
+    async reStake(): Promise<WriteInteractionResponse | null> {
+        return await this.writeInteraction(
+            { function: "reStake"},
             {strict: true} // Strict mode to try dry-run first and report errors
         );
     }

@@ -218,4 +218,46 @@ describe('Testing the Staking Logic', () => {
     expect((await staking.stakeOf(user1)).stake).toEqual(0);
   });
 
+  it('should stake all the owned tokens', async () => {
+    await erc20.approve({
+      spender: stakingContractTxId,
+      amount: 1000,
+    });
+
+    expect((await erc20.balanceOf(user1)).balance).toEqual(100);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(0);
+    expect((await staking.stakeOf(user1)).stake).toEqual(0);
+
+    await staking.stakeAll();
+
+    expect((await erc20.balanceOf(user1)).balance).toEqual(0);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(100);
+    expect((await staking.stakeOf(user1)).stake).toEqual(100);
+  });
+
+  it('should withdraw half of staked tokens', async () => {
+    expect((await erc20.balanceOf(user1)).balance).toEqual(0);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(100);
+    expect((await staking.stakeOf(user1)).stake).toEqual(100);
+
+    await staking.withdraw(50);
+
+    expect((await erc20.balanceOf(user1)).balance).toEqual(50);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(50);
+    expect((await staking.stakeOf(user1)).stake).toEqual(50);
+  });
+
+  it('should re stake', async () => {
+    expect((await erc20.balanceOf(user1)).balance).toEqual(50);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(50);
+    expect((await staking.stakeOf(user1)).stake).toEqual(50);
+
+    await staking.reStake();
+
+    expect((await erc20.balanceOf(user1)).balance).toEqual(0);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(100);
+    expect((await staking.stakeOf(user1)).stake).toEqual(100);
+  });
+
+
 });
