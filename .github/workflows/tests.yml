@@ -11,7 +11,7 @@ jobs:
       - uses: jetli/wasm-pack-action@v0.3.0
         with:
           version: 'latest'
-      - name: ERC20 - intall RUST
+      - name: ERC20 - intall dependencies
         run: yarn
         working-directory: erc20
       - name: ERC20 build
@@ -20,3 +20,12 @@ jobs:
       - name: ERC20 run tests
         run: yarn test
         working-directory: erc20
+      - name: Staking contract - install dependencies
+        run: yarn
+        working-directory: staking
+      - name: Staking contract build
+        run: yarn build
+        working-directory: staking
+      - name: Integration - install dependencies
+        run: yarn
+        working-directory: integration
