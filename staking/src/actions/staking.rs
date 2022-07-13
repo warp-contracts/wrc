@@ -8,11 +8,18 @@ use crate::contract_utils::handler_result::HandlerResult::QueryResponse;
 use wasm_bindgen::JsValue;
 
 #[derive(Serialize)]
-struct Input {
+struct InputTransferFrom {
     function: String,
     from: String,
     to: String,
-    amount: u64,
+    amount: u64
+}
+
+#[derive(Serialize)]
+struct InputTransfer {
+    function: String,
+    to: String,
+    amount: u64
 }
 
 #[derive(Debug, Deserialize)]
@@ -36,7 +43,7 @@ pub async fn stake(mut state: State, amount: u64) -> ActionResult {
 
     let result = SmartWeave::write(
         &state.token.to_string(),
-        JsValue::from_serde(&Input {
+        JsValue::from_serde(&InputTransferFrom {
             function: "transferFrom".to_string(),
             from: caller.to_owned(),
             to: contract_id,
@@ -58,7 +65,7 @@ pub async fn stake(mut state: State, amount: u64) -> ActionResult {
     Ok(HandlerResult::NewState(state))
 }
 
-pub fn withdraw(mut state: State, amount: u64) -> ActionResult {
+pub async fn withdraw(mut state: State, amount: u64) -> ActionResult {
     if amount == 0 {
         return Err(TransferAmountMustBeHigherThanZero);
     }
@@ -66,6 +73,22 @@ pub fn withdraw(mut state: State, amount: u64) -> ActionResult {
     let caller = Transaction::owner();
     let stakes = &mut state.stakes;
     let current_stake = *stakes.get(&caller).unwrap_or(&0);
+
+    // Send tokens
+    let result = SmartWeave::write(
+        &state.token.to_string(),
+        JsValue::from_serde(&InputTransfer {
+            function: "transfer".to_string(),
+            to: caller.to_owned(),
+            amount
+        }).unwrap(),
+    ).await;
+
+    let result: Result = result.into_serde().unwrap();
+
+    if result.result_type != "ok" {
+        return Err(FailedTokenTransfer(result.error_message));
+    }
 
     // Update caller balance
     stakes.insert(caller, current_stake - amount);
