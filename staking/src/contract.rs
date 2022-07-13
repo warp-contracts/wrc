@@ -24,7 +24,7 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
 
     match action {
         Action::Stake { amount } => stake(current_state, amount).await,
-        Action::Withdraw { amount } => withdraw(current_state, amount),
+        Action::Withdraw { amount } => withdraw(current_state, amount).await,
         Action::StakeOf { target } => stake_of(current_state, target),
     }
 }

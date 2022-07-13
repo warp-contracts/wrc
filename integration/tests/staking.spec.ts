@@ -47,14 +47,14 @@ describe('Testing the Staking Logic', () => {
   beforeAll(async () => {
     // note: each tests suit (i.e. file with tests that Jest is running concurrently
     // with another files has to have ArLocal set to a different port!)
-    arlocal = new ArLocal(1820, false);
+    arlocal = new ArLocal(1821, false);
     await arlocal.start();
 
     LoggerFactory.INST.logLevel('error');
     //LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    warp = WarpFactory.forLocal();
+    warp = WarpFactory.forLocal(1821);
 
     ownerWallet = await warp.testing.generateWallet();
     owner = await warp.arweave.wallets.jwkToAddress(ownerWallet);
@@ -192,6 +192,30 @@ describe('Testing the Staking Logic', () => {
     expect((await erc20.allowance(user1, stakingContractTxId)).allowance).toEqual(40);
 
     expect((await staking.stakeOf(user1)).stake).toEqual(10);
+  });
+
+  it('should withdraw part of staked tokens', async () => {
+    expect((await erc20.balanceOf(user1)).balance).toEqual(90);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(10);
+    expect((await staking.stakeOf(user1)).stake).toEqual(10);
+
+    await staking.withdraw(5);
+
+    expect((await erc20.balanceOf(user1)).balance).toEqual(95);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(5);
+    expect((await staking.stakeOf(user1)).stake).toEqual(5);
+  });
+
+  it('should withdraw all of staked tokens', async () => {
+    expect((await erc20.balanceOf(user1)).balance).toEqual(95);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(5);
+    expect((await staking.stakeOf(user1)).stake).toEqual(5);
+
+    await staking.withdraw(5);
+
+    expect((await erc20.balanceOf(user1)).balance).toEqual(100);
+    expect((await erc20.balanceOf(stakingContractTxId)).balance).toEqual(0);
+    expect((await staking.stakeOf(user1)).stake).toEqual(0);
   });
 
 });
