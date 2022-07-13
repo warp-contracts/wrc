@@ -1,9 +1,11 @@
 const {getWarp, loadWallet, getContractTxId} = require("./utils");
+const {LoggerFactory, TsLogFactory} = require("warp-contracts");
 
+LoggerFactory.use(new TsLogFactory());
+LoggerFactory.INST.logLevel('debug', 'CacheableStateEvaluator');
+LoggerFactory.INST.logLevel('debug', 'WarpGatewayInteractionsLoader');
+LoggerFactory.INST.logLevel('debug', 'HandlerBasedContract');
 
-
-
-//LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
 async function approve(erc20, stakingTxId, amount) {
     console.log("Approving: " + stakingTxId + " for: " + amount);
@@ -19,7 +21,7 @@ async function stake(staking, amount) {
     let interaction = await staking.writeInteraction(
         {function: "stake", amount},
         // Uncomment this line to reproduce the error
-        //{strict: true}
+        {strict: true}
     );
 
     console.log("Staking transaction sent: " + interaction.originalTxId);
@@ -53,14 +55,17 @@ async function approveAndStake() {
                         .setEvaluationOptions({internalWrites: true})
                         .connect(ownerWallet);
 
+    console.log('Calling approve');
     await approve(erc20, stakingTxId, 5);
+
+    console.log('Calling stake');
     await stake(staking, 1);
-    await stake(staking, 1);
+    /*await stake(staking, 1);
     await stake(staking, 1);
     await withdraw(staking, 1);
 
     await showContractState(erc20);
-    await showContractState(staking);
+    await showContractState(staking);*/
 }
 
 approveAndStake();
