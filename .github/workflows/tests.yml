@@ -29,3 +29,6 @@ jobs:
       - name: Integration - install dependencies
         run: yarn
         working-directory: integration
+      - name: Integration tests
+        run: yarn test
+        working-directory: integration
