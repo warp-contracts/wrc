@@ -10,8 +10,10 @@ getTmpContractTxIdPath = function(network, contractName) {
     return path.join(__dirname, `./deployments/${network}-${contractName}-tx-id.txt`)
 }
 
-module.exports.setContractTxId = function (network, contractName, contractTxId) {
-    fs.writeFileSync(getTmpContractTxIdPath(network, contractName), contractTxId);
+module.exports.setContractTxId = function (network, contractTxId) {
+    let contractsDir = path.join(__dirname, './deployments');
+    if (!fs.existsSync(contractsDir)) fs.mkdirSync(contractsDir);
+    fs.writeFileSync(getTmpContractTxIdPath(network, contractTxId), contractTxId);
 };
 
 module.exports.getContractTxId = function (network, contractName) {
@@ -41,7 +43,8 @@ module.exports.loadWallet = async function (
     warp, generate
 ) {
     let wallet;
-    let walletFilename = path.join(__dirname, `../scripts/.secrets/wallet_${warp.environment}.json`);
+    let walletDir = path.join(__dirname, '../scripts/.secrets');
+    let walletFilename = path.join(walletDir, `/wallet_${warp.environment}.json`);
     if (generate) {
         console.log("GENERATING wallet");
         if (warp.environment === 'local' || warp.environment === 'testnet') {
@@ -49,6 +52,7 @@ module.exports.loadWallet = async function (
         } else {
             wallet = await warp.arweave.wallets.generate();
         }
+        if (!fs.existsSync(walletDir)) fs.mkdirSync(walletDir);
         fs.writeFileSync(walletFilename, JSON.stringify(wallet));
     } else {
         try {
