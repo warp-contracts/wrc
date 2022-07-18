@@ -45,9 +45,13 @@ module.exports.loadWallet = async function (
     let wallet;
     let walletDir = path.join(__dirname, '../scripts/.secrets');
     let walletFilename = path.join(walletDir, `/wallet_${warp.environment}.json`);
-    if (generate && (warp.environment === 'local' || warp.environment === 'testnet')) {
-        console.log("GENERATING test env wallet");
-        wallet = await warp.testing.generateWallet();
+    if (generate) {
+        console.log("GENERATING wallet");
+        if (warp.environment === 'local' || warp.environment === 'testnet') {
+            wallet = await warp.testing.generateWallet();
+        } else {
+            wallet = await warp.arweave.wallets.generate();
+        }
         if (!fs.existsSync(walletDir)) fs.mkdirSync(walletDir);
         fs.writeFileSync(walletFilename, JSON.stringify(wallet));
     } else {

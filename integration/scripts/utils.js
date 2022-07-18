@@ -10,10 +10,10 @@ getTmpContractTxIdPath = function(network, contractName) {
     return path.join(__dirname, `./deployments/${network}-${contractName}-tx-id.txt`)
 }
 
-module.exports.setContractTxId = function (network, contractTxId) {
+module.exports.setContractTxId = function (network, contractName, contractTxId) {
     let contractsDir = path.join(__dirname, './deployments');
     if (!fs.existsSync(contractsDir)) fs.mkdirSync(contractsDir);
-    fs.writeFileSync(getTmpContractTxIdPath(network, contractTxId), contractTxId);
+    fs.writeFileSync(getTmpContractTxIdPath(network, contractName), contractTxId);
 };
 
 module.exports.getContractTxId = function (network, contractName) {

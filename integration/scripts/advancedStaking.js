@@ -1,10 +1,10 @@
 const {getWarp, loadWallet, getContractTxId} = require("./utils");
 const {LoggerFactory, TsLogFactory} = require("warp-contracts");
 
-LoggerFactory.use(new TsLogFactory());
-LoggerFactory.INST.logLevel('debug', 'CacheableStateEvaluator');
-LoggerFactory.INST.logLevel('debug', 'WarpGatewayInteractionsLoader');
-LoggerFactory.INST.logLevel('debug', 'HandlerBasedContract');
+//LoggerFactory.use(new TsLogFactory());
+//LoggerFactory.INST.logLevel('debug', 'CacheableStateEvaluator');
+//LoggerFactory.INST.logLevel('debug', 'WarpGatewayInteractionsLoader');
+//LoggerFactory.INST.logLevel('debug', 'HandlerBasedContract');
 
 
 async function approve(erc20, stakingTxId, amount) {
@@ -27,6 +27,26 @@ async function stake(staking, amount) {
     console.log("Staking transaction sent: " + interaction.originalTxId);
 }
 
+async function stakeAll(staking) {
+    let interaction = await staking.writeInteraction(
+        {function: "stakeAll"},
+        // Uncomment this line to reproduce the error
+        {strict: true}
+    );
+
+    console.log("Staking All transaction sent: " + interaction.originalTxId);
+}
+
+async function reStake(staking) {
+    let interaction = await staking.writeInteraction(
+        {function: "reStake"},
+        // Uncomment this line to reproduce the error
+        {strict: true}
+    );
+
+    console.log("ReStaking transaction sent: " + interaction.originalTxId);
+}
+
 
 async function withdraw(staking, amount) {
     let interaction = await staking.writeInteraction(
@@ -47,19 +67,23 @@ async function approveAndStake() {
     [ownerWallet, ownerAddress] = await loadWallet(warp, );
 
     const erc20 = warp.contract(getContractTxId(warp.environment, "erc20"))
-                      .setEvaluationOptions({internalWrites: true})
-                      .connect(ownerWallet);
+        .setEvaluationOptions({internalWrites: true})
+        .connect(ownerWallet);
 
     const stakingTxId = getContractTxId(warp.environment, "staking");
     const staking = warp.contract(stakingTxId)
-                        .setEvaluationOptions({internalWrites: true})
-                        .connect(ownerWallet);
+        .setEvaluationOptions({internalWrites: true})
+        .connect(ownerWallet);
 
-    await approve(erc20, stakingTxId, 5);
-    await stake(staking, 1);
-    await stake(staking, 1);
+    await approve(erc20, stakingTxId, 1000);
     await stake(staking, 1);
     await withdraw(staking, 1);
+    await stake(staking, 1);
+    await withdraw(staking, 1);
+    await stakeAll(staking);
+    await withdraw(staking, 20);
+    await reStake(staking);
+    await withdraw(staking, 100);
 
     await showContractState(erc20);
     await showContractState(staking);

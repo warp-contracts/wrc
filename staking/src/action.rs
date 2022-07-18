@@ -18,7 +18,10 @@ pub enum Action {
         target: String
     },
     StakeAll {},
-    ReStake {}
+    ReStake {},
+    Evolve {
+        value: String
+    }
 }
 
 #[derive(Serialize, Deserialize)]

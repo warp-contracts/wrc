@@ -3,7 +3,7 @@ use crate::error::ContractError::{WithdrawalAmountMustBeHigherThanZero, StakingA
 use crate::state::State;
 use crate::erc20::ERC20State;
 use crate::contract_utils::handler_result::HandlerResult;
-use crate::contract_utils::js_imports::{log, SmartWeave, Transaction, Contract};
+use crate::contract_utils::js_imports::{SmartWeave, Transaction, Contract};
 use crate::action::{QueryResponseMsg::Stake, ActionResult};
 use crate::contract_utils::handler_result::HandlerResult::QueryResponse;
 use wasm_bindgen::JsValue;
@@ -66,7 +66,7 @@ pub async fn stake(mut state: State, amount: u64) -> ActionResult {
     Ok(HandlerResult::NewState(state))
 }
 
-pub async fn stake_all(mut state: State) -> ActionResult {
+pub async fn stake_all(state: State) -> ActionResult {
     let caller = Transaction::owner();
 
     let result = SmartWeave::read_contract_state(&state.token.to_string()).await;
@@ -76,7 +76,7 @@ pub async fn stake_all(mut state: State) -> ActionResult {
     stake(state, amount).await
 }
 
-pub async fn re_stake(mut state: State) -> ActionResult {
+pub async fn re_stake(state: State) -> ActionResult {
     let caller = Transaction::owner();
     let current_stake = *state.stakes.get( & caller).unwrap_or(&0);
 
