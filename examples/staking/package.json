@@ -1,0 +1,31 @@
+{
+  "name": "staking",
+  "version": "0.0.1",
+  "description": "Warp contracts - staking contracts example",
+  "main": "index.js",
+  "author": "Redstone Team <dev@redstone.finance>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "wasm-pack build --target nodejs --release --out-name staking-contract",
+    "advanced:mainnet": "node scripts/deployERC20 --network mainnet && node scripts/deployStaking --network mainnet  && node scripts/advancedStaking --network mainnet",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=16.5"
+  },
+  "devDependencies": {
+    "warp-contract-utils": "0.0.1",
+    "erc20": "0.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "*",
+    "yargs": "*",
+    "@types/jest": "*",
+    "arlocal": "*",
+    "arweave": "*",
+    "jest": "*",
+    "ts-jest": "*",
+    "warp-contracts": "*"
+  }
+}

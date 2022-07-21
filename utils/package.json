@@ -1,0 +1,16 @@
+{
+  "name": "warp-contract-utils",
+  "version": "0.0.1",
+  "description": "Warp contract utils",
+  "author": "Redstone Team <dev@redstone.finance>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {},
+  "engines": {
+    "node": ">=16.5"
+  },
+  "peerDependencies": {
+    "yargs": "*",
+    "warp-contracts": "*"
+  }
+}

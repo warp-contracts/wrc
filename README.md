@@ -1,69 +1,69 @@
-# RedStone SmartWeave ERC20
+# Warp Rust Contracts
 
-This repo contains SmartWeave implementation of the ERC20 token contract standard.
+This repo contains Warp implementation of contract standards.
 
-The repository also contains a sample Staking contract implemented to demonstrate the usual 
-approval -> transferFrom flow of tokens. 
+## Directories structure
 
-## Building contracts
+- Contracts
+  - Atomic NFT
+  - ERC20
+  - PST
+- Examples
+  - Staking
 
-#### Go into the `erc20` directory and run
+## Install dependencies
+
+Run:
+`yarn`
+
+## Build contract standard
+
+Select contract you want to build and run:
+
+`yarn build:[CONTRACT_NAME]`
+
+eg.:
+
+`yarn build:erc20 `
+
+## Build example contract
+
+Select example contract you want to build and run
+
+`yarn build:example:[EXAMPLE_CONTRACT_NAME]`
+
+eg.:
+
+`yarn build:example:staking `
+
+## Run tests
+
+#### Basic unit tests
+
+Select contract you want to test and run:
+
+`yarn test:[CONTRACT_NAME]`
+
+eg.:
+
+`yarn test:erc20 `
+
+## Deploy and test contracts on different networks
+
+To run deploy and tests scripts select contract and script and run:
 
 `
-yarn build
+yarn run workspace:[CONTRACT_WORKSPACE_NAME] scripts/[SCRIPT-NAME]
 `
 
-#### If you want to run integration tests - go into the `staking` directory and run
+eg.:
 
 `
-yarn build
+yarn run workspace:warp-erc
 `
-
-## Running tests
-
-#### Basic ERC20 unit tests
-
-Go to the `erc20` directory and run
-
-`
-yarn test
-`
-
-#### Integration tests with a staking contract
-
-Go to the `integration` directory and run
-
-`
-yarn test
-`
-
-
-## Deploying and testing contracts on different networks
 
 All of the testing scripts should be invoked with a `--network` parameter specifying one of the 3 possible networks:
-* mainnet
-* testnet
-* local
 
-
-#### Integration tests
-
-1. Deploy the erc20 contract: 
-
-`
-node ./scripts/deployERC20 --network mainnet
-`
-
-2. Deploy the staking contract:
-
-`
-node ./scripts/deployStaking --network mainnet
-`
-
-3. Run sample script with approvals, staking and withdrawals:
-
-`
-node ./scripts/approveAndStake --network mainnet
-`
-
-
+- mainnet
+- testnet
+- local

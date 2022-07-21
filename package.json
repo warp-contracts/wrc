@@ -1,0 +1,39 @@
+{
+  "private": true,
+  "name": "wrc",
+  "workspaces": {
+    "packages": [
+      "contracts/*",
+      "utils",
+      "examples/*"
+    ],
+    "nohoist": [
+      "**/arlocal",
+      "**/arlocal/**"
+    ]
+  },
+  "scripts": {
+    "build:atomic-nft": "yarn workspace atomic-nft build",
+    "test:atomic-nft": "yarn workspace atomic-nft test",
+    "build:erc20": "yarn workspace erc20 build",
+    "test:erc20": "yarn workspace erc20 test",
+    "build:pst": "yarn workspace pst build",
+    "test:pst": "yarn workspace pst test",
+    "build:example:staking": "yarn workspace staking build",
+    "run:example:staking": "yarn workspace staking advanced:mainnet",
+    "test:example:staking": "yarn workspace staking test"
+  },
+  "dependencies": {
+    "yargs": "17.5.1",
+    "warp-contracts": "1.2.0-beta.10",
+    "ts-jest": "^28.0.7",
+    "typescript": "^4.7.4",
+    "arweave": "1.11.4",
+    "@types/jest": "28.1.6",
+    "@types/node": "18.0.6",
+    "arlocal": "1.1.42"
+  },
+  "resolutions": {
+    "jest": "28.1.3"
+  }
+}
