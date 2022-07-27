@@ -9,9 +9,7 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
   const nftAssetPath = fs.readFileSync(path.join(__dirname, './assets/candies.jpeg'));
 
   let initialState = {
-    title: 'Test Atomic NFT token',
     description: 'This is the test deploy of Atomic NFT token',
-    contentType: 'image/jpeg',
     symbol: 'Atomic-NFT-test',
     name: 'Sample Atomic NFT token',
     decimals: 6,

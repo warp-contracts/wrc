@@ -43,9 +43,7 @@ describe('Testing the Atomic NFT Token', () => {
     user3 = await warp.arweave.wallets.jwkToAddress(user3Wallet);
 
     initialState = {
-      title: 'Atomic NFT token test',
       description: 'This is the test of Atomic NFT token',
-      contentType: 'text/html',
       settings: null,
       symbol: 'atomic-NFT-test',
       name: 'Sample Atomic NFT token',

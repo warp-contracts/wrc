@@ -4,9 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub struct State {
-    pub title: String,
-    pub description: String,
-    pub content_type: String,
+    pub description: Option<String>,
     pub owner: Option<String>,
     pub symbol: String,
     pub name: Option<String>,
