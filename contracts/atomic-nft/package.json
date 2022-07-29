@@ -1,0 +1,47 @@
+{
+  "name": "atomic-nft",
+  "version": "0.0.1",
+  "description": "Warp Atomic NFT contract",
+  "author": "Redstone Team <dev@redstone.finance>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "wasm-pack build --target nodejs --release --out-name atomic-nft-contract",
+    "deploy:local": "yarn build && node scripts/deploy --network local",
+    "deploy:testnet": "yarn build && node scripts/deploy --network testnet",
+    "deploy:mainnet": "yarn build && node scripts/deploy --network mainnet",
+    "read:local": "node scripts/get-full-state.js --network local",
+    "read:testnet": "node scripts/get-full-state.js --network testnet",
+    "read:mainnet": "node scripts/get-full-state.js --network mainnet",
+    "balance:local": "node scripts/get-balance.js --network local",
+    "balance:testnet": "node scripts/get-balance.js --network testnet",
+    "balance:mainnet": "node scripts/get-balance.js --network testnet",
+    "transfer:local": "node scripts/interact-transfer.js --network local",
+    "transfer:testnet": "node scripts/interact-transfer.js --network testnet",
+    "transfer:mainnet": "node scripts/interact-transfer.js --network mainnet",
+    "transfer-from:local": "node scripts/interact-transfer-from.js --network local",
+    "transfer-from:testnet": "node scripts/interact-transfer-from.js --network testnet",
+    "transfer-from:mainnet": "node scripts/interact-transfer-from.js --network mainnet",
+    "jump-transfers:local": "node scripts/jump-transfers.js --network local",
+    "jump-transfers:testnet": "node scripts/jump-transfers.js --network testnet",
+    "jump-transfers:mainnet": "node scripts/jump-transfers.js --network mainnet",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=16.5"
+  },
+  "dependencies": {
+    "warp-contract-utils": "0.0.1"
+  },
+  "peerDependencies": {
+    "@types/jest": "*",
+    "@types/node": "*",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
+    "arlocal": "*",
+    "arweave": "*",
+    "ts-jest": "*",
+    "warp-contracts": "*",
+    "typescript": "*"
+  }
+}

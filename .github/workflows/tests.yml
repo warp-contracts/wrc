@@ -7,28 +7,25 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '18'
       - uses: jetli/wasm-pack-action@v0.3.0
         with:
           version: 'latest'
-      - name: ERC20 - intall dependencies
-        run: yarn
-        working-directory: erc20
+      - name: Install dependencies
+        run: yarn install
       - name: ERC20 build
-        run: yarn build
-        working-directory: erc20
-      - name: ERC20 run tests
-        run: yarn test
-        working-directory: erc20
-      - name: Staking contract - install dependencies
-        run: yarn
-        working-directory: staking
+        run: yarn build:erc20
+      - name: ERC20 test
+        run: yarn test:erc20
+      - name: Atomic NFT build
+        run: yarn build:atomic-nft
+      - name: Atomic NFT run tests
+        run: yarn test:atomic-nft
+      - name: PST build
+        run: yarn build:pst
+      - name: PST run tests
+        run: yarn test:pst
       - name: Staking contract build
-        run: yarn build
-        working-directory: staking
-      - name: Integration - install dependencies
-        run: yarn
-        working-directory: integration
-      - name: Integration tests
-        run: yarn test
-        working-directory: integration
+        run: yarn build:example:staking
+      - name: Staking contract test
+        run: yarn test:example:staking
