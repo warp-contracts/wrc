@@ -94,9 +94,7 @@ export interface ERC20State extends EvolveState {
 }
 
 export interface AtomicNFTState extends ERC20State {
-  title: string;
-  description: string;
-  contentType: string;
+  description?: string;
 }
 
 /**
