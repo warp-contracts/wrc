@@ -86,19 +86,17 @@ export interface StakingContract extends Contract<StakingState> {
 
   /**
    * stake all the ERC0 tokens owned
-   * @param amount - amount of tokens to stake
    */
   stakeAll(): Promise<WriteInteractionResponse | null>;
 
   /**
    * Returns staked tokens and stake all tokens owned
-   * @param amount - amount of tokens to stake
    */
   reStake(): Promise<WriteInteractionResponse | null>;
 
   /**
    * withdraws ERC20 tokens
-   * @param transfer - amount of tokens to withdraw
+   * @param amount - amount of tokens to withdraw
    */
   withdraw(amount: number): Promise<WriteInteractionResponse | null>;
 }

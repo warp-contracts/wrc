@@ -5,7 +5,6 @@ export * as erc20wasm from '../pkg/';
 import {
   ArWallet,
   Contract,
-  ContractData,
   ContractDeploy,
   HandlerBasedContract,
   Warp,
@@ -13,7 +12,7 @@ import {
 } from 'warp-contracts';
 
 /**
- * The result from the "balance" view method on the PST Contract.
+ * The result from the "balanceOf" view method on the ERC20 Contract.
  */
 export interface BalanceResult {
   balance: number;
@@ -22,14 +21,14 @@ export interface BalanceResult {
 }
 
 /**
- * The result from the "totalSupply" view method on the PST Contract.
+ * The result from the "totalSupply" view method on the ERC20 Contract.
  */
 export interface TotalSupplyResult {
   value: number;
 }
 
 /**
- * The result from the "balance" view method on the PST Contract.
+ * The result from the "allowance" view method on the ERC20 Contract.
  */
 export interface AllowanceResult {
   ticker: string;
@@ -77,7 +76,7 @@ export interface EvolveState {
   owner: string;
 }
 /**
- * Interface describing base state for all PST contracts.
+ * Interface describing base state for all ERC20 contracts.
  */
 export interface ERC20State extends EvolveState {
   symbol: string;
@@ -120,7 +119,7 @@ export interface ApproveInput {
 
 /**
  * A type of {@link Contract} designed specifically for the interaction with
- * Profit Sharing Token contract.
+ * ERC20 contract.
  */
 export interface ERC20Contract extends Contract<ERC20State> {
   /**
@@ -135,8 +134,9 @@ export interface ERC20Contract extends Contract<ERC20State> {
   totalSupply(): Promise<TotalSupplyResult>;
 
   /**
-   * return the current balance for the given wallet
-   * @param target - wallet address
+   * return the amount which spender is allowed to withdraw from owner.
+   * @param owner - wallet address from which spender can withdraw the tokens
+   * @param spender - wallet address allowed to withdraw tokens from owner
    */
   allowance(owner: string, spender: string): Promise<AllowanceResult>;
 
@@ -145,7 +145,7 @@ export interface ERC20Contract extends Contract<ERC20State> {
    */
   currentState(): Promise<ERC20State>;
   /**
-   * allows to transfer PSTs between wallets
+   * allows to transfer ERC20 tokens between wallets
    * @param transfer - data required to perform a transfer, see {@link transfer}
    */
   transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null>;
