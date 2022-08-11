@@ -11,7 +11,7 @@ import {
 } from 'warp-contracts';
 
 /**
- * The result from the "balance" view method on the PST Contract.
+ * The result from the "balanceOf" view method on the Atomic NFT Contract.
  */
 export interface BalanceResult {
   balance: number;
@@ -20,14 +20,14 @@ export interface BalanceResult {
 }
 
 /**
- * The result from the "totalSupply" view method on the PST Contract.
+ * The result from the "totalSupply" view method on the Atomic NFT Contract.
  */
 export interface TotalSupplyResult {
   value: number;
 }
 
 /**
- * The result from the "balance" view method on the PST Contract.
+ * The result from the "allowance" view method on the Atomic NFT Contract.
  */
 export interface AllowanceResult {
   ticker: string;
@@ -74,8 +74,9 @@ export interface EvolveState {
    */
   owner: string;
 }
+
 /**
- * Interface describing base state for all PST contracts.
+ * Interface describing base state for all ERC20 contracts.
  */
 export interface ERC20State extends EvolveState {
   owner: string;
@@ -93,6 +94,9 @@ export interface ERC20State extends EvolveState {
   };
 }
 
+/**
+ * Interface describing base state for Atomic NFT contracts.
+ */
 export interface AtomicNFTState extends ERC20State {
   description?: string;
 }
@@ -124,7 +128,7 @@ export interface ApproveInput {
 
 /**
  * A type of {@link Contract} designed specifically for the interaction with
- * Profit Sharing Token contract.
+ * ERC20 contract.
  */
 export interface ERC20Contract extends Contract<ERC20State> {
   /**
@@ -139,8 +143,9 @@ export interface ERC20Contract extends Contract<ERC20State> {
   totalSupply(): Promise<TotalSupplyResult>;
 
   /**
-   * return the current balance for the given wallet
-   * @param target - wallet address
+   * return the amount which spender is allowed to withdraw from owner.
+   * @param owner - wallet address from which spender can withdraw the tokens
+   * @param spender - wallet address allowed to withdraw tokens from owner
    */
   allowance(owner: string, spender: string): Promise<AllowanceResult>;
 
@@ -149,7 +154,7 @@ export interface ERC20Contract extends Contract<ERC20State> {
    */
   currentState(): Promise<ERC20State>;
   /**
-   * allows to transfer PSTs between wallets
+   * allows to transfer tokens between wallets
    * @param transfer - data required to perform a transfer, see {@link transfer}
    */
   transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null>;
@@ -167,6 +172,10 @@ export interface ERC20Contract extends Contract<ERC20State> {
   approve(transfer: ApproveInput): Promise<WriteInteractionResponse | null>;
 }
 
+/**
+ * A type of {@link Contract} designed specifically for the interaction with
+ * Atomic NFT contract.
+ */
 export interface AtomicNFTContract extends ERC20Contract {}
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {

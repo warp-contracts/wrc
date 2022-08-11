@@ -1,15 +1,15 @@
 # Warp Rust Contracts
 
-This repo contains Warp implementation of contract standards.
+This repo contains Warp implementation of SmartWeave contract standards. Contracts are written in Rust and then compiled into WASM. WASM provides proper sandboxing ensuring execution environment isolation which guarantees security to the contracts execution.
 
 ## Directories structure
 
 - Contracts
-  - Atomic NFT
-  - ERC20
-  - PST
+  - [Atomic NFT](https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-nft)
+  - [ERC20](https://github.com/warp-contracts/wrc/tree/master/contracts/erc20)
+  - [PST](https://github.com/warp-contracts/wrc/tree/master/contracts/pst)
 - Examples
-  - Staking
+  - [Staking](https://github.com/warp-contracts/wrc/tree/master/examples/staking)
 
 ## Install dependencies
 
@@ -59,7 +59,7 @@ yarn run workspace:[CONTRACT_WORKSPACE_NAME] scripts/[SCRIPT-NAME]
 eg.:
 
 `
-yarn run workspace:warp-erc
+yarn run workspace:warp-erc scripts/deploy.js
 `
 
 All of the testing scripts should be invoked with a `--network` parameter specifying one of the 3 possible networks:
