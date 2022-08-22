@@ -1,4 +1,4 @@
-# Warp Rust Contracts
+# Warp Request for Comments
 
 This repo contains Warp implementation of SmartWeave contract standards. Contracts are written in Rust and then compiled into WASM. WASM provides proper sandboxing ensuring execution environment isolation which guarantees security to the contracts execution.
 
