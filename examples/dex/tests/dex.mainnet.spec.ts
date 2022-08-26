@@ -96,6 +96,7 @@ describe('Testing the Staking Logic', () => {
   it('should properly deploy contract ERC20 contract', async () => {
     const initialDexState = {
       name: "DEX",
+      liquidityProvider: null,
       token0: token0.txId(),
       token1: token1.txId(),
       reserve0: 0,
@@ -256,6 +257,9 @@ describe('Testing the Staking Logic', () => {
   });
 
   it('should withdraw/burn dex liquidity', async () => {
+
+    dex.connect(ownerWallet);
+
     await dex.writeInteraction({
       function: 'burn'
     });

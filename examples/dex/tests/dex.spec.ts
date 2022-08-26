@@ -177,6 +177,18 @@ describe('Testing the Staking Logic', () => {
    
   });
 
+  it('should prevent adding liquidity again', async () => {
+    await expect(dex.writeInteraction({
+      function: 'mint',
+      amountIn0: 1,
+      amountIn1: 1
+    },
+      { strict: true })
+    ).rejects.toThrow(
+      'Burn liquidity first before adding it again'  
+    );
+  });
+
   it('should correctly calculate amoutOut (price) for amountIn0', async () => {
     
     const { result: amountOut1 }  = await dex.viewState({
@@ -283,10 +295,21 @@ describe('Testing the Staking Logic', () => {
     expect(evalResult.state.reserve1).toEqual(2000);   
   });
 
-  it('should withdraw/burn dex liquidity', async () => {
+  it('should prevent withdraw/burn dex liquidity for non-provider', async () => {
+    await expect(dex.writeInteraction({
+        function: 'burn'
+      },
+      { strict: true })
+    ).rejects.toThrow(
+      'Only the liqidity provider may burn and withdraw the liquidity'  
+    );
+  });
+
+  it('should withdraw/burn dex liquidity when called by liquidity provider', async () => {
+    dex.connect(ownerWallet);
     await dex.writeInteraction({
       function: 'burn'
-    });
+    });    
 
     let evalResult = await dex.readState();
 
@@ -294,8 +317,7 @@ describe('Testing the Staking Logic', () => {
     expect((await token0.balanceOf(dex.txId())).balance).toEqual(0);
 
     expect(evalResult.state.reserve1).toEqual(0);
-    expect((await token1.balanceOf(dex.txId())).balance).toEqual(0);
-   
+    expect((await token1.balanceOf(dex.txId())).balance).toEqual(0);   
   });
 
 
