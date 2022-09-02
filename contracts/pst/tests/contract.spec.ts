@@ -44,8 +44,7 @@ describe('Testing the Profit Sharing Token', () => {
 
     warp = WarpFactory.forLocal(1820);
 
-    wallet = await warp.testing.generateWallet();
-    walletAddress = await warp.arweave.wallets.jwkToAddress(wallet);
+    ({ jwk: wallet, address: walletAddress } = await warp.testing.generateWallet());
 
     contractSrc = fs.readFileSync(path.join(__dirname, '../pkg/pst-contract_bg.wasm'));
     const stateFromFile: PstState = JSON.parse(fs.readFileSync(path.join(__dirname, './data/token-pst.json'), 'utf8'));
