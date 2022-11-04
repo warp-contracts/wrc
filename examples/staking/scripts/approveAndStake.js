@@ -2,9 +2,10 @@ const {getWarp, loadWallet, getContractTxId} = require("warp-contract-utils");
 const {LoggerFactory, TsLogFactory} = require("warp-contracts");
 
 LoggerFactory.use(new TsLogFactory());
-LoggerFactory.INST.logLevel('debug', 'CacheableStateEvaluator');
-LoggerFactory.INST.logLevel('debug', 'WarpGatewayInteractionsLoader');
-LoggerFactory.INST.logLevel('debug', 'HandlerBasedContract');
+LoggerFactory.INST.logLevel('error');
+//LoggerFactory.INST.logLevel('debug', 'CacheableStateEvaluator');
+//LoggerFactory.INST.logLevel('debug', 'WarpGatewayInteractionsLoader');
+//LoggerFactory.INST.logLevel('debug', 'HandlerBasedContract');
 
 
 async function approve(erc20, stakingTxId, amount) {
@@ -44,13 +45,13 @@ async function showContractState(contract) {
 
 async function approveAndStake() {
     let warp = getWarp();
-    [ownerWallet, ownerAddress] = await loadWallet(warp, );
+    [ownerWallet, ownerAddress] = await loadWallet(warp, false, __dirname);
 
-    const erc20 = warp.contract(getContractTxId(warp.environment, "erc20"))
+    const erc20 = warp.contract(getContractTxId(warp.environment, __dirname, 'erc20'))
                       .setEvaluationOptions({internalWrites: true})
                       .connect(ownerWallet);
 
-    const stakingTxId = getContractTxId(warp.environment, "staking");
+    const stakingTxId = getContractTxId(warp.environment, __dirname, "staking");
     const staking = warp.contract(stakingTxId)
                         .setEvaluationOptions({internalWrites: true})
                         .connect(ownerWallet);

@@ -9,6 +9,7 @@
   "scripts": {
     "build": "wasm-pack build --target nodejs --release --out-name staking-contract",
     "advanced:mainnet": "node scripts/deployERC20 --network mainnet && node scripts/deployStaking --network mainnet  && node scripts/advancedStaking --network mainnet",
+    "simple:mainnet": "node scripts/deployERC20 --network mainnet && node scripts/deployStaking --network mainnet  && node scripts/approveAndStake --network mainnet",
     "test": "jest"
   },
   "engines": {
