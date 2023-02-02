@@ -1,0 +1,25 @@
+{
+  "name": "typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": false,
+  "exports": {
+    "contract": "./dist/contracts/atomic-nft-typescript/contract/atomic-nft.js",
+    "lib": "./dist/contracts/atomic-nft-typescript/lib/index.js",
+    "bindings": "./dist/contracts/atomic-nft-typescript/bindings/atomic-nft-js-binding.js"
+  },
+  "scripts": {
+    "test": "jest --config jest.config.js",
+    "build": "tsc --project tsconfig-build.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+      "warp-contract-utils": "0.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.5"
+  }
+}
