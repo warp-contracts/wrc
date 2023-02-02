@@ -247,7 +247,7 @@ export async function deployAtomicNFT(
   // deploying contract using the new SDK.
 
   const bundledContractSrc = await build({
-    entryPoints: [path.join(__dirname, '../dist/contract/atomic-nft.js')],
+    entryPoints: [path.join(__dirname, '../dist/contracts/atomic-nft-typescript/contract/atomic-nft.js')],
     bundle: true,
     write: false,
     outfile: 'bundled.js'

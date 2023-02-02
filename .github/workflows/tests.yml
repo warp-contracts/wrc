@@ -17,10 +17,14 @@ jobs:
         run: yarn build:erc20
       - name: ERC20 test
         run: yarn test:erc20
-      - name: Atomic NFT build
-        run: yarn build:atomic-nft
-      - name: Atomic NFT run tests
-        run: yarn test:atomic-nft
+      - name: Atomic NFT [Rust] build
+        run: yarn build:atomic-nft-rust
+      - name: Atomic NFT [Rust] run tests
+        run: yarn test:atomic-nft-rust
+      - name: Atomic NFT [Typescript] build
+        run: yarn build:atomic-nft-typescript
+      - name: Atomic NFT [Typescript] run tests
+        run: yarn test:atomic-nft-typescript
       - name: PST build
         run: yarn build:pst
       - name: PST run tests

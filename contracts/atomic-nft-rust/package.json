@@ -1,5 +1,5 @@
 {
-  "name": "atomic-nft",
+  "name": "atomic-nft-rust",
   "version": "0.0.1",
   "description": "Warp Atomic NFT contract",
   "author": "Redstone Team <dev@redstone.finance>",
