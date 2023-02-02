@@ -1,5 +1,5 @@
 [package]
-name = "atomic-nft"
+name = "atomic-asset"
 version = "0.1.0"
 authors = ["dev@redstone.finance"]
 edition = "2021"

@@ -1,6 +1,6 @@
 import { allowance, _approve } from "./allowance";
 import { get, getOr, isAddress, isPositiveInt } from "./utils";
-import { AtomicNFTState, WriteResult } from "./faces";
+import { AtomicAssetState, WriteResult } from "./faces";
 
 /**
  * Moves `amount`t tokens from the caller’s account to `to`.
@@ -9,7 +9,7 @@ import { AtomicNFTState, WriteResult } from "./faces";
  * @param to receiver of transfer
  * @param amount how much  we want to transfer
  */
-export function transfer(state: AtomicNFTState, to: string, amount: number): WriteResult {
+export function transfer(state: AtomicAssetState, to: string, amount: number): WriteResult {
     const from = get(SmartWeave.caller);
     isAddress(to, "to");
     isPositiveInt(amount, "amount");
@@ -24,9 +24,9 @@ export function transfer(state: AtomicNFTState, to: string, amount: number): Wri
  * @param state this contract mutable state
  * @param from From which account we want to transfer asset
  * @param to receiver of transfer
- * @param amount how much of NFT we want to transfer, if amount == totalSupply we are transferring whole NFT
+ * @param amount how much of Asset we want to transfer, if amount == totalSupply we are transferring whole Asset
  */
-export function transferFrom(state: AtomicNFTState, from: string, to: string, amount: number): WriteResult {
+export function transferFrom(state: AtomicAssetState, from: string, to: string, amount: number): WriteResult {
     const caller = get(SmartWeave.caller);
     isAddress(to, "to");
     isAddress(from, "from");
@@ -51,7 +51,7 @@ export function transferFrom(state: AtomicNFTState, from: string, to: string, am
  * @param to receiver of transfer
  * @param amount how much  we want to transfer
  */
-export function _transfer(state: AtomicNFTState, from: string, to: string, amount: number): WriteResult {
+export function _transfer(state: AtomicAssetState, from: string, to: string, amount: number): WriteResult {
     const balances = state.balances;
 
     const fromBalance = getOr(balances[from], 0);
@@ -78,7 +78,7 @@ export function _transfer(state: AtomicNFTState, from: string, to: string, amoun
     return { state };
 }
 
-function _claimOwnership(state: AtomicNFTState, potentialOwner: string) {
+function _claimOwnership(state: AtomicAssetState, potentialOwner: string) {
     const currentBalance = getOr(state.balances[potentialOwner], 0);
 
     if (currentBalance === state.totalSupply) {

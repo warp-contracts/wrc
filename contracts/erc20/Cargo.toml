@@ -1,5 +1,5 @@
 [package]
-name = "warp-atomic-nft"
+name = "warp-atomic-asset"
 version = "0.1.0"
 authors = ["RedStone"]
 edition = "2021"

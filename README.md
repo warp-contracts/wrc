@@ -1,11 +1,14 @@
 # Warp Request for Comments
 
-This repo contains Warp implementation of SmartWeave contract standards. Contracts are written in Rust and then compiled into WASM. WASM provides proper sandboxing ensuring execution environment isolation which guarantees security to the contracts execution.
+This repo contains Warp implementation of SmartWeave contract standards.
+Contracts are written in Rust and then compiled into WASM. WASM provides proper
+sandboxing ensuring execution environment isolation which guarantees security to
+the contracts execution.
 
 ## Directories structure
 
 - Contracts
-  - [Atomic NFT](https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-nft)
+  - [Atomic Asset](https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-asset)
   - [ERC20](https://github.com/warp-contracts/wrc/tree/master/contracts/erc20)
   - [PST](https://github.com/warp-contracts/wrc/tree/master/contracts/pst)
 - Examples
@@ -13,8 +16,7 @@ This repo contains Warp implementation of SmartWeave contract standards. Contrac
 
 ## Install dependencies
 
-Run:
-`yarn`
+Run: `yarn`
 
 ## Build contract standard
 
@@ -24,7 +26,7 @@ Select contract you want to build and run:
 
 eg.:
 
-`yarn build:erc20 `
+`yarn build:erc20`
 
 ## Build example contract
 
@@ -34,7 +36,7 @@ Select example contract you want to build and run
 
 eg.:
 
-`yarn build:example:staking `
+`yarn build:example:staking`
 
 ## Run tests
 
@@ -46,23 +48,20 @@ Select contract you want to test and run:
 
 eg.:
 
-`yarn test:erc20 `
+`yarn test:erc20`
 
 ## Deploy and test contracts on different networks
 
 To run deploy and tests scripts select contract and script and run:
 
-`
-yarn run workspace:[CONTRACT_WORKSPACE_NAME] scripts/[SCRIPT-NAME]
-`
+`yarn run workspace:[CONTRACT_WORKSPACE_NAME] scripts/[SCRIPT-NAME]`
 
 eg.:
 
-`
-yarn run workspace:warp-erc scripts/deploy.js
-`
+`yarn run workspace:warp-erc scripts/deploy.js`
 
-All of the testing scripts should be invoked with a `--network` parameter specifying one of the 3 possible networks:
+All of the testing scripts should be invoked with a `--network` parameter
+specifying one of the 3 possible networks:
 
 - mainnet
 - testnet

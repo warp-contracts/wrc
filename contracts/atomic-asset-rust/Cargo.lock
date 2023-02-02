@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "atomic-nft"
+name = "atomic-asset"
 version = "0.1.0"
 dependencies = [
  "js-sys",

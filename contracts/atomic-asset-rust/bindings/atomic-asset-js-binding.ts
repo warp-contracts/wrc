@@ -1,5 +1,5 @@
+import fs from 'fs';
 import path from 'path';
-import { build } from 'esbuild';
 
 import {
   ArWallet,
@@ -11,7 +11,7 @@ import {
 } from 'warp-contracts';
 
 /**
- * The result from the "balanceOf" view method on the Atomic NFT Contract.
+ * The result from the "balanceOf" view method on the Atomic Asset Contract.
  */
 export interface BalanceResult {
   balance: number;
@@ -20,14 +20,14 @@ export interface BalanceResult {
 }
 
 /**
- * The result from the "totalSupply" view method on the Atomic NFT Contract.
+ * The result from the "totalSupply" view method on the Atomic Asset Contract.
  */
 export interface TotalSupplyResult {
   value: number;
 }
 
 /**
- * The result from the "allowance" view method on the Atomic NFT Contract.
+ * The result from the "allowance" view method on the Atomic Asset Contract.
  */
 export interface AllowanceResult {
   ticker: string;
@@ -95,9 +95,9 @@ export interface ERC20State extends EvolveState {
 }
 
 /**
- * Interface describing base state for Atomic NFT contracts.
+ * Interface describing base state for Atomic Asset contracts.
  */
-export interface AtomicNFTState extends ERC20State {
+export interface AtomicAssetState extends ERC20State {
   description?: string;
 }
 
@@ -174,9 +174,9 @@ export interface ERC20Contract extends Contract<ERC20State> {
 
 /**
  * A type of {@link Contract} designed specifically for the interaction with
- * Atomic NFT contract.
+ * Atomic Asset contract.
  */
-export interface AtomicNFTContract extends ERC20Contract { }
+export interface AtomicAssetContract extends ERC20Contract { }
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
   async balanceOf(target: string): Promise<BalanceResult> {
@@ -214,11 +214,11 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
   }
 
   async evolve(newSrcTxId: string): Promise<WriteInteractionResponse | null> {
-    throw new Error("Not implemented!")
+    return Promise.resolve(undefined);
   }
 
   saveNewSource(newContractSource: string): Promise<string | null> {
-    throw new Error("Not implemented!")
+    return Promise.resolve(undefined);
   }
 
   async transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null> {
@@ -234,36 +234,30 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
   }
 }
 
-export class AtomicNFTContractImpl extends ERC20ContractImpl implements ERC20Contract { }
+export class AtomicAssetContractImpl extends ERC20ContractImpl implements ERC20Contract { }
 
-export async function deployAtomicNFT(
+export async function deployAtomicAsset(
   Warp: Warp,
-  initialState: AtomicNFTState,
-  ownerWallet: ArWallet,
-  data: string = '<h1>HELLO WORLD</h1>'
-): Promise<[AtomicNFTState, ContractDeploy]> {
+  initialState: AtomicAssetState,
+  ownerWallet: ArWallet
+): Promise<[AtomicAssetState, ContractDeploy]> {
   // deploying contract using the new SDK.
-
-  const bundledContractSrc = await build({
-    entryPoints: [path.join(__dirname, '../dist/contracts/atomic-nft-typescript/contract/atomic-nft.js')],
-    bundle: true,
-    write: false,
-    outfile: 'bundled.js'
-  });
-
-  return Warp.deploy
-    ({
+  return Warp.createContract
+    .deploy({
       wallet: ownerWallet,
       initState: JSON.stringify(initialState),
-      src: bundledContractSrc.outputFiles[0].text,
+      src: fs.readFileSync(path.join(__dirname, '../pkg/atomic-asset-contract_bg.wasm')),
+      wasmSrcCodeDir: path.join(__dirname, '../src'),
+      wasmGlueCode: path.join(__dirname, '../pkg/atomic-asset-contract.js'),
       data: { 'Content-Type': 'text/html', body: '<h1>HELLO WORLD</h1>' },
     })
     .then((txId) => [initialState, txId]);
 }
 
-export async function connectAtomicNFT(Warp: Warp, contractTxId: string, wallet: ArWallet): Promise<AtomicNFTContract> {
-  let contract = new AtomicNFTContractImpl(contractTxId, Warp).setEvaluationOptions({
+export async function connectAtomicAsset(Warp: Warp, contractTxId: string, wallet: ArWallet): Promise<AtomicAssetContract> {
+  let contract = new AtomicAssetContractImpl(contractTxId, Warp).setEvaluationOptions({
     internalWrites: true,
-  }) as AtomicNFTContract;
-  return contract.connect(wallet) as AtomicNFTContract;
+  }) as AtomicAssetContract;
+
+  return contract.connect(wallet) as AtomicAssetContract;
 }

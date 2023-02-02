@@ -1,5 +1,5 @@
 import { getOr, get, Result, isAddress, isNonNegInt } from "./utils";
-import { AtomicNFTState, WriteResult } from "./faces";
+import { AtomicAssetState, WriteResult } from "./faces";
 
 export type AllowanceResult = {
     result: {
@@ -18,7 +18,7 @@ export type AllowanceResult = {
  * @param spender 
  * @returns 
  */
-export function allowance(state: AtomicNFTState, owner: string, spender: string): AllowanceResult {
+export function allowance(state: AtomicAssetState, owner: string, spender: string): AllowanceResult {
     isAddress(owner, "owner");
     isAddress(spender, "spender");
 
@@ -44,7 +44,7 @@ export function allowance(state: AtomicNFTState, owner: string, spender: string)
  * @param amount amount to be approved to `transferFrom` by spender
  * @returns 
  */
-export function approve(state: AtomicNFTState, spender: string, amount: number): WriteResult {
+export function approve(state: AtomicAssetState, spender: string, amount: number): WriteResult {
     const caller = get(SmartWeave.caller);
     isAddress(spender, "spender");
     isNonNegInt(amount, "amount");
@@ -61,7 +61,7 @@ export function approve(state: AtomicNFTState, spender: string, amount: number):
  * @param amount amount to be approved to `transferFrom` by spender
  * @returns 
  */
-export function _approve(state: AtomicNFTState, owner: string, spender: string, amount: number): WriteResult {
+export function _approve(state: AtomicAssetState, owner: string, spender: string, amount: number): WriteResult {
     if (amount > 0) {
         const ownerAllowance = getOr(state.allowances[owner], {});
 

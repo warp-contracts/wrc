@@ -1,13 +1,13 @@
 import { allowance, approve } from "../lib/allowance";
 import { balanceOf, totalSupply } from "../lib/balance";
-import { AtomicNFTState } from "../lib/faces";
+import { AtomicAssetState } from "../lib/faces";
 import { transfer, transferFrom } from "../lib/transfer";
 
 type Action = {
     input: Record<string, any>
 }
 
-export function handle(state: AtomicNFTState, action: Action) {
+export function handle(state: AtomicAssetState, action: Action) {
     const { input } = action;
 
     switch (action.input.function) {

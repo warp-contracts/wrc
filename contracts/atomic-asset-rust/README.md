@@ -1,11 +1,14 @@
-# 🦀 Atomic NFT
+# 🦀 Atomic Asset
 
-This is a Warp standard for Atomic NFT contract. The idea of Atomic NFT is that we create a single transaction with asset file, metadata and contract itself. One id points to both - contract and asset. The asset is put in the data field of the contract and initial state is put ij the tags (by default initial state is placed in the data field).
+This is a Warp standard for Atomic Asset contract. The idea of Atomic Asset is
+that we create a single transaction with asset file, metadata and contract
+itself. One id points to both - contract and asset. The asset is put in the data
+field of the contract and initial state is put ij the tags (by default initial
+state is placed in the data field).
 
 ## Install dependencies
 
-Run:
-`yarn`
+Run: `yarn`
 
 ## Build contract
 
@@ -27,7 +30,8 @@ To run deploy and tests scripts run:
 node scripts/[SCRIPT-NAME]
 ```
 
-All of the testing scripts should be invoked with a `--network` parameter specifying one of the 3 possible networks:
+All of the testing scripts should be invoked with a `--network` parameter
+specifying one of the 3 possible networks:
 
 - mainnet
 - testnet
@@ -35,8 +39,8 @@ All of the testing scripts should be invoked with a `--network` parameter specif
 
 ## Functions
 
-- [`deployAtomicNFT`](#deployatomicnft)
-- [`connectAtomicNFT`](#connectatomicnft)
+- [`deployAtomicAsset`](#deployatomicAsset)
+- [`connectAtomicAsset`](#connectatomicAsset)
 - [`balanceOf`](#balanceof)
 - [`totalSupply`](#totalsupply)
 - [`allowance`](#allowance)
@@ -45,25 +49,29 @@ All of the testing scripts should be invoked with a `--network` parameter specif
 - [`transferFrom`](#transferfrom)
 - [`approve`](#approve)
 
-#### `deployAtomicNFT`
+#### `deployAtomicAsset`
 
 ```typescript
-async function deployAtomicNFT(
+async function deployAtomicAsset(
   Warp: Warp,
-  initialState: AtomicNFTState,
-  ownerWallet: ArWallet
-): Promise<[AtomicNFTState, ContractDeploy]>;
+  initialState: AtomicAssetState,
+  ownerWallet: ArWallet,
+): Promise<[AtomicAssetState, ContractDeploy]>;
 ```
 
-Deploys Atomic NFT contract.
+Deploys Atomic Asset contract.
 
-#### `connectAtomicNFT`
+#### `connectAtomicAsset`
 
 ```typescript
-export async function connectAtomicNFT(Warp: Warp, contractTxId: string, wallet: ArWallet): Promise<AtomicNFTContract>;
+export async function connectAtomicAsset(
+  Warp: Warp,
+  contractTxId: string,
+  wallet: ArWallet,
+): Promise<AtomicAssetContract>;
 ```
 
-Connects to Atomic NFT contract.
+Connects to Atomic Asset contract.
 
 #### `balanceOf`
 
@@ -87,7 +95,7 @@ interface BalanceResult {
   <summary>Example</summary>
 
 ```typescript
-const result = await contract.balanceOf('ADDRESS_ID');
+const result = await contract.balanceOf("ADDRESS_ID");
 ```
 
 </details>
@@ -118,7 +126,10 @@ const result = await contract.totalSupply();
 #### `allowance`
 
 ```typescript
-async function allowance(owner: string, spender: string): Promise<AllowanceResult>;
+async function allowance(
+  owner: string,
+  spender: string,
+): Promise<AllowanceResult>;
 ```
 
 Returns the amount which `spender` is allowed to withdraw from `owner`.
@@ -139,7 +150,10 @@ interface AllowanceResult {
   <summary>Example</summary>
 
 ```typescript
-const result = await contract.allowance('OWNER_ADDRESS_ID', 'CONTRACT_ADDRESS_ID');
+const result = await contract.allowance(
+  "OWNER_ADDRESS_ID",
+  "CONTRACT_ADDRESS_ID",
+);
 ```
 
 </details>
@@ -185,7 +199,9 @@ const result = await contract.currentState();
 #### `transfer`
 
 ```typescript
-async function transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null>;
+async function transfer(
+  transfer: TransferInput,
+): Promise<WriteInteractionResponse | null>;
 ```
 
 Allows to transfer tokens between wallets.
@@ -204,7 +220,7 @@ interface TransferInput {
   <summary>Example</summary>
 
 ```typescript
-const result = await contract.transfer('TO_ADDRESS', 100);
+const result = await contract.transfer("TO_ADDRESS", 100);
 ```
 
 </details>
@@ -212,7 +228,9 @@ const result = await contract.transfer('TO_ADDRESS', 100);
 #### `transferFrom`
 
 ```typescript
-async function transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null>;
+async function transferFrom(
+  transfer: TransferFromInput,
+): Promise<WriteInteractionResponse | null>;
 ```
 
 Allows transferring tokens using the allowance mechanism.
@@ -233,7 +251,7 @@ interface TransferFromInput {
   <summary>Example</summary>
 
 ```typescript
-const result = await contract.transferFrom('FROM_ADDRESS', 'TO_ADDRESS', 100);
+const result = await contract.transferFrom("FROM_ADDRESS", "TO_ADDRESS", 100);
 ```
 
 </details>
@@ -241,7 +259,9 @@ const result = await contract.transferFrom('FROM_ADDRESS', 'TO_ADDRESS', 100);
 #### `approve`
 
 ```typescript
-async function approve(transfer: ApproveInput): Promise<WriteInteractionResponse | null>;
+async function approve(
+  transfer: ApproveInput,
+): Promise<WriteInteractionResponse | null>;
 ```
 
 Approves tokens to be spent by another account between wallets.
@@ -260,7 +280,7 @@ interface ApproveInput {
   <summary>Example</summary>
 
 ```typescript
-const result = await contract.approve('SPENDER_ADDRESS', 100);
+const result = await contract.approve("SPENDER_ADDRESS", 100);
 ```
 
 </details>

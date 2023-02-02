@@ -1,6 +1,6 @@
 const { getWarp, getContractTxId, loadWallet } = require('warp-contract-utils');
 
-async function jumpTransfer(warp, wallet, atomicNFT) {
+async function jumpTransfer(warp, wallet, atomicAsset) {
   const walletAddress = await warp.arweave.wallets.getAddress(wallet);
   let targetWallet;
   if (warp.environment === 'testnet' || warp.environment === 'local') {
@@ -12,8 +12,8 @@ async function jumpTransfer(warp, wallet, atomicNFT) {
 
   console.log('Sending: ' + walletAddress + ' -> ' + targetAddress);
 
-  atomicNFT.connect(wallet);
-  const transferResponse = await atomicNFT.writeInteraction(
+  atomicAsset.connect(wallet);
+  const transferResponse = await atomicAsset.writeInteraction(
     { function: 'transfer', to: targetAddress, amount: 1 },
     { string: true }
   );
@@ -27,9 +27,9 @@ async function jumpTransfer(warp, wallet, atomicNFT) {
   const warp = getWarp();
   let [wallet] = await loadWallet(warp);
 
-  const atomicNFT = warp.contract(getContractTxId(warp.environment, __dirname)).connect(wallet);
+  const atomicAsset = warp.contract(getContractTxId(warp.environment, __dirname)).connect(wallet);
 
   for (let i = 0; i < 100; i++) {
-    wallet = await jumpTransfer(warp, wallet, atomicNFT);
+    wallet = await jumpTransfer(warp, wallet, atomicAsset);
   }
 })();

@@ -1,4 +1,4 @@
-import { AtomicNFTState } from "./faces"
+import { AtomicAssetState } from "./faces"
 import { isAddress, Result } from "./utils"
 
 export type BalanceOfResult = {
@@ -15,7 +15,7 @@ export type BalanceOfResult = {
  * @param target
  * @returns balance of `target`
  */
-export function balanceOf(state: AtomicNFTState, target: string) {
+export function balanceOf(state: AtomicAssetState, target: string) {
     isAddress(target, "target");
 
     return Result({
@@ -36,7 +36,7 @@ export type TotalSupplyResult = {
  * @param state this contract mutable state
  * @returns the amount of tokens in existence.
  */
-export function totalSupply(state: AtomicNFTState): TotalSupplyResult {
+export function totalSupply(state: AtomicAssetState): TotalSupplyResult {
     return Result({
         value: state.totalSupply
     })

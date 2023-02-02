@@ -1,4 +1,4 @@
-export interface AtomicNFTState {
+export interface AtomicAssetState {
     description?: string;
     owner?: string;
     symbol: string;
@@ -13,5 +13,5 @@ export interface AtomicNFTState {
 }
 
 export type WriteResult = {
-    state: AtomicNFTState
+    state: AtomicAssetState
 };

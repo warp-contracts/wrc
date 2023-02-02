@@ -5,13 +5,13 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
 (async () => {
   const warp = getWarp();
   const [wallet, walletAddress] = await loadWallet(warp, true, __dirname);
-  const contractSrc = fs.readFileSync(path.join(__dirname, '../pkg/atomic-nft-contract_bg.wasm'));
-  const nftAssetPath = fs.readFileSync(path.join(__dirname, './assets/candies.jpeg'));
+  const contractSrc = fs.readFileSync(path.join(__dirname, '../pkg/atomic-asset-contract_bg.wasm'));
+  const AssetAssetPath = fs.readFileSync(path.join(__dirname, './assets/candies.jpeg'));
 
   let initialState = {
-    description: 'This is the test deploy of Atomic NFT token',
-    symbol: 'Atomic-NFT-test',
-    name: 'Sample Atomic NFT token',
+    description: 'This is the test deploy of Atomic Asset token',
+    symbol: 'atomic-asset-test',
+    name: 'Sample Atomic Asset token',
     decimals: 6,
     totalSupply: 1000000,
     balances: {
@@ -29,8 +29,8 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
     initState: JSON.stringify(initialState),
     src: contractSrc,
     wasmSrcCodeDir: path.join(__dirname, '../src'),
-    wasmGlueCode: path.join(__dirname, '../pkg/atomic-nft-contract.js'),
-    data: { 'Content-Type': 'image/jpeg', body: nftAssetPath },
+    wasmGlueCode: path.join(__dirname, '../pkg/atomic-asset-contract.js'),
+    data: { 'Content-Type': 'image/jpeg', body: AssetAssetPath },
   });
 
   setContractTxId(warp.environment, deployment.contractTxId, __dirname);

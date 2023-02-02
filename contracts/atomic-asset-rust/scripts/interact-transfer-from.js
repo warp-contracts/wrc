@@ -12,17 +12,17 @@ const { getWarp, getContractTxId, loadWallet } = require('warp-contract-utils');
   }
   const targetAddress = await warp.arweave.wallets.getAddress(targetWallet);
 
-  const atomicNFT = warp.contract(getContractTxId(warp.environment, __dirname)).connect(wallet);
-  const atomicNFTFromTarget = warp.contract(getContractTxId(warp.environment, __dirname)).connect(targetWallet);
+  const atomicAsset = warp.contract(getContractTxId(warp.environment, __dirname)).connect(wallet);
+  const atomicAssetFromTarget = warp.contract(getContractTxId(warp.environment, __dirname)).connect(targetWallet);
 
-  const approveId = await atomicNFT.writeInteraction(
+  const approveId = await atomicAsset.writeInteraction(
     { function: 'approve', spender: targetAddress, amount: 10000 },
     { strict: true }
   );
 
   console.log('Approve tx id', approveId);
 
-  const transferResponse = await atomicNFTFromTarget.writeInteraction(
+  const transferResponse = await atomicAssetFromTarget.writeInteraction(
     {
       function: 'transferFrom',
       from: walletAddress,

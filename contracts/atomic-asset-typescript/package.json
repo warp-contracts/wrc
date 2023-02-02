@@ -1,13 +1,13 @@
 {
-  "name": "atomic-nft-typescript",
+  "name": "atomic-asset-typescript",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "private": false,
   "exports": {
-    "contract": "./dist/contracts/atomic-nft-typescript/contract/atomic-nft.js",
-    "lib": "./dist/contracts/atomic-nft-typescript/lib/index.js",
-    "bindings": "./dist/contracts/atomic-nft-typescript/bindings/atomic-nft-js-binding.js"
+    "contract": "./dist/contracts/atomic-asset-typescript/contract/atomic-asset.js",
+    "lib": "./dist/contracts/atomic-asset-typescript/lib/index.js",
+    "bindings": "./dist/contracts/atomic-asset-typescript/bindings/atomic-asset-js-binding.js"
   },
   "scripts": {
     "test": "jest --config jest.config.js",

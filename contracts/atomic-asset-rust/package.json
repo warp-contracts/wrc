@@ -1,12 +1,12 @@
 {
-  "name": "atomic-nft-rust",
-  "version": "0.0.1",
-  "description": "Warp Atomic NFT contract",
+  "name": "atomic-asset-rust",
+  "version": "0.0.2",
+  "description": "Warp Atomic Asset contract",
   "author": "Redstone Team <dev@redstone.finance>",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "wasm-pack build --target nodejs --release --out-name atomic-nft-contract",
+    "build": "wasm-pack build --target nodejs --release --out-name atomic-asset-contract",
     "deploy:local": "yarn build && node scripts/deploy --network local",
     "deploy:testnet": "yarn build && node scripts/deploy --network testnet",
     "deploy:mainnet": "yarn build && node scripts/deploy --network mainnet",
