@@ -142,7 +142,7 @@ export class StakingContractImpl extends HandlerBasedContract<StakingState> impl
 
   async currentState() {
     console.log('Getting current state from staking');
-    return (await super.readState()).state;
+    return (await super.readState()).cachedValue.state;
   }
 
   saveNewSource(newContractSource: string): Promise<string | null> {
