@@ -1,5 +1,5 @@
 import { allowance, _approve } from "./allowance";
-import { get, getOr } from "./utils";
+import { get, getOr, isAddress, isPositiveInt } from "./utils";
 import { AtomicNFTState, WriteResult } from "./faces";
 
 /**
@@ -11,6 +11,8 @@ import { AtomicNFTState, WriteResult } from "./faces";
  */
 export function transfer(state: AtomicNFTState, to: string, amount: number): WriteResult {
     const from = get(SmartWeave.caller);
+    isAddress(to, "to");
+    isPositiveInt(amount, "amount");
 
     return _transfer(state, from, to, amount);
 }
@@ -26,6 +28,9 @@ export function transfer(state: AtomicNFTState, to: string, amount: number): Wri
  */
 export function transferFrom(state: AtomicNFTState, from: string, to: string, amount: number): WriteResult {
     const caller = get(SmartWeave.caller);
+    isAddress(to, "to");
+    isAddress(from, "from");
+    isPositiveInt(amount, "amount");
 
     const { result: { allowance: allowed } } = allowance(state, from, caller);
 

@@ -1,4 +1,4 @@
-import { getOr, get, Result } from "./utils";
+import { getOr, get, Result, isAddress, isNonNegInt } from "./utils";
 import { AtomicNFTState, WriteResult } from "./faces";
 
 export type AllowanceResult = {
@@ -19,6 +19,9 @@ export type AllowanceResult = {
  * @returns 
  */
 export function allowance(state: AtomicNFTState, owner: string, spender: string): AllowanceResult {
+    isAddress(owner, "owner");
+    isAddress(spender, "spender");
+
     const allowance = getOr(
         getOr(
             state.allowances[owner], {}
@@ -35,7 +38,7 @@ export function allowance(state: AtomicNFTState, owner: string, spender: string)
 }
 /**
  * Potential attack vector - https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM/edit
- * Sets amount as the allowance of spender over the caller’s tokens. Returns a boolean value indicating whether the operation succeeded.
+ * Sets amount as the allowance of spender over the caller’s tokens.
  * @param state mutable state of contract
  * @param spender spender
  * @param amount amount to be approved to `transferFrom` by spender
@@ -43,12 +46,15 @@ export function allowance(state: AtomicNFTState, owner: string, spender: string)
  */
 export function approve(state: AtomicNFTState, spender: string, amount: number): WriteResult {
     const caller = get(SmartWeave.caller);
+    isAddress(spender, "spender");
+    isNonNegInt(amount, "amount");
+
     return _approve(state, caller, spender, amount);
 }
 
 /**
  * Potential attack vector - https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM/edit
- * Sets amount as the allowance of spender over the caller’s tokens. Returns a boolean value indicating whether the operation succeeded.
+ * Sets amount as the allowance of spender over the caller’s tokens.
  * @param state mutable state of contract
  * @param owner owner or partial owner of asset
  * @param spender spender

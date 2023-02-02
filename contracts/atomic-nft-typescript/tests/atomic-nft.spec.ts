@@ -91,8 +91,14 @@ describe('Testing the Atomic NFT Token', () => {
     it('should keep the owner if total supply belongs to one address', async () => {
         await atomicNFT.transfer({
             to: user2,
-            amount: 0,
+            amount: 1,
         });
+
+        await (atomicNFT.connect(user2Wallet) as AtomicNFTContract).transfer({
+            to: owner,
+            amount: 1,
+        });
+        atomicNFT.connect(ownerWallet);
 
         expect((await atomicNFT.balanceOf(owner)).balance).toEqual(100);
         expect((await atomicNFT.balanceOf(user2)).balance).toEqual(0);
@@ -101,6 +107,8 @@ describe('Testing the Atomic NFT Token', () => {
     });
 
     it('should properly transfer tokens', async () => {
+
+        console.log(await atomicNFT.currentState())
         await atomicNFT.transfer({
             to: user2,
             amount: 10,
@@ -128,7 +136,7 @@ describe('Testing the Atomic NFT Token', () => {
         expect((await atomicNFT.allowance(owner, user2)).allowance).toEqual(20);
     });
 
-    it('hould not transfer from more tokens than allowed', async () => {
+    it('should not transfer from more tokens than allowed', async () => {
         let atomicNFTFromUser2 = await connectAtomicNFT(warp, contractTxId, user2Wallet);
 
         await expect(
@@ -260,5 +268,9 @@ describe('Testing the Atomic NFT Token', () => {
         await atomicNFT.transfer({ to: user3, amount: 20 });
         expect((await atomicNFT.currentState()).owner).toEqual(user3);
     });
+
+    it('should fail to transfer if amount 0', async () => {
+        await expect(atomicNFT.transfer({ to: user2, amount: 0 })).rejects.toThrowError("Validation error: \"amount\" has to be integer and > 0")
+    })
 });
 

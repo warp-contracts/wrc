@@ -1,5 +1,5 @@
 import { AtomicNFTState } from "./faces"
-import { Result } from "./utils"
+import { isAddress, Result } from "./utils"
 
 export type BalanceOfResult = {
     result: {
@@ -16,6 +16,8 @@ export type BalanceOfResult = {
  * @returns balance of `target`
  */
 export function balanceOf(state: AtomicNFTState, target: string) {
+    isAddress(target, "target");
+
     return Result({
         balance: state.balances[target] ?? 0,
         ticker: state.symbol,
