@@ -1,8 +1,7 @@
-import fs from 'fs';
-
 import ArLocal from 'arlocal';
 import { JWKInterface } from 'arweave/node/lib/wallet';
-import { getTag, LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
+import { getTag } from 'warp-contract-utils';
+import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
 import { connectERC20, deployERC20, ERC20Contract, ERC20State } from '../bindings/erc20-js-binding';
 
 jest.setTimeout(30000);
@@ -38,9 +37,9 @@ describe('Testing the ERC20 Token', () => {
 
     warp = WarpFactory.forLocal(1820);
 
-    ({ jwk: ownerWallet, address: owner } = await warp.testing.generateWallet());
-    ({ jwk: user2Wallet, address: user2 } = await warp.testing.generateWallet());
-    ({ jwk: user3Wallet, address: user3 } = await warp.testing.generateWallet());
+    ({ jwk: ownerWallet, address: owner } = await warp.generateWallet());
+    ({ jwk: user2Wallet, address: user2 } = await warp.generateWallet());
+    ({ jwk: user3Wallet, address: user3 } = await warp.generateWallet());
 
     initialState = {
       settings: null,

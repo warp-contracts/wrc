@@ -4,11 +4,11 @@ module.exports = {
 
   moduleFileExtensions: ['ts', 'js'],
 
-  testPathIgnorePatterns: ['/.yalc/', '/data/', '/utils'],
+  testPathIgnorePatterns: ['/.yalc/', '/data/', '/utils', '/dist'],
 
   testEnvironment: 'node',
 
-  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@assemblyscript/.*)'],
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@assemblyscript/.*)', 'node_modules'],
 
   transform: {
     '^.+\\.(ts|js)$': 'ts-jest',

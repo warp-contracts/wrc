@@ -176,7 +176,7 @@ export interface ERC20Contract extends Contract<ERC20State> {
  * A type of {@link Contract} designed specifically for the interaction with
  * Atomic NFT contract.
  */
-export interface AtomicNFTContract extends ERC20Contract {}
+export interface AtomicNFTContract extends ERC20Contract { }
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
   async balanceOf(target: string): Promise<BalanceResult> {
@@ -210,7 +210,7 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
   }
 
   async currentState() {
-    return (await super.readState()).state;
+    return (await super.readState()).cachedValue.state;
   }
 
   async evolve(newSrcTxId: string): Promise<WriteInteractionResponse | null> {
@@ -234,7 +234,7 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
   }
 }
 
-export class AtomicNFTContractImpl extends ERC20ContractImpl implements ERC20Contract {}
+export class AtomicNFTContractImpl extends ERC20ContractImpl implements ERC20Contract { }
 
 export async function deployAtomicNFT(
   Warp: Warp,

@@ -65,6 +65,22 @@ module.exports.loadWallet = async function (warp, generate, dir) {
   return [wallet, address];
 };
 
+module.exports.getTag = function getTag(tx, name) {
+  const tags = tx.get('tags');
+
+  for (const tag of tags) {
+    // decoding tags can throw on invalid utf8 data.
+    try {
+      if (tag.get('name', { decode: true, string: true }) === name) {
+        return tag.get('value', { decode: true, string: true });
+      }
+      // eslint-disable-next-line no-empty
+    } catch (e) { }
+  }
+
+  return false;
+}
+
 const getNetwork = function () {
   if (!argv.network) {
     throw new Error('Network not specified please run the script with --network parameter');

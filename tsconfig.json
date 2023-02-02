@@ -5,6 +5,7 @@
     "lib": ["dom"],
     "esModuleInterop": true,
     "downlevelIteration": true,
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true,
   }
 }

@@ -13,8 +13,8 @@
     ]
   },
   "scripts": {
-    "build:atomic-nft": "yarn workspace atomic-nft build",
-    "test:atomic-nft": "yarn workspace atomic-nft test",
+    "build:atomic-nft": "yarn workspace atomic-nft-rust build",
+    "test:atomic-nft": "yarn workspace atomic-nft-rust test",
     "build:erc20": "yarn workspace erc20 build",
     "test:erc20": "yarn workspace erc20 test",
     "build:pst": "yarn workspace pst build",
@@ -30,7 +30,7 @@
     "arweave": "1.11.4",
     "ts-jest": "^28.0.7",
     "typescript": "^4.7.4",
-    "warp-contracts": "1.2.2",
+    "warp-contracts": "1.2.51",
     "yargs": "17.5.1"
   },
   "resolutions": {
