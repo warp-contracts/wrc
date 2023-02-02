@@ -2,7 +2,8 @@ import ArLocal from 'arlocal';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { getTag } from 'warp-contract-utils';
 import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
-import { AtomicAssetState, connectAtomicAsset, deployAtomicAsset, AtomicAssetContract } from '../bindings/atomic-asset-js-binding';
+import { AtomicAssetState, AtomicAssetContract } from "atomic-asset-js-bindings";
+import { deployAtomicAsset, connectAtomicAsset } from "../helpers/helpers";
 
 jest.setTimeout(30000);
 
@@ -270,8 +271,28 @@ describe('Testing the Atomic Asset Token', () => {
   });
 
 
-  it('should fail to transfer if amount 0', async () => {
+  it('should fail to transfer if transfer amount == 0', async () => {
     await expect(atomicAsset.transfer({ to: user2, amount: 0 })).rejects.toThrowError("Cannot create interaction: [CE:AmountHasToBeGtThenZero]")
-  })
+  });
+
+  it('should increase allowance using increaseAllowance method', async () => {
+    await atomicAsset.increaseAllowance({ spender: user2, amountToAdd: 20 });
+    await atomicAsset.increaseAllowance({ spender: user3, amountToAdd: 30 });
+
+    expect((await atomicAsset.allowance(owner, user2)).allowance).toEqual(20);
+    expect((await atomicAsset.allowance(owner, user3)).allowance).toEqual(30);
+  });
+
+  it('should decrease allowance using decreaseAllowance method', async () => {
+    await atomicAsset.decreaseAllowance({ spender: user2, amountToSubtract: 20 });
+    await atomicAsset.decreaseAllowance({ spender: user3, amountToSubtract: 30 });
+
+    expect((await atomicAsset.allowance(owner, user2)).allowance).toEqual(0);
+    expect((await atomicAsset.allowance(owner, user3)).allowance).toEqual(0);
+  });
+
+  it('should throw when decreaseAllowance below zero', async () => {
+    await expect(atomicAsset.decreaseAllowance({ spender: user3, amountToSubtract: 30 })).rejects.toThrowError("Cannot create interaction: [CE:AllowanceHasToGtThenZero]");
+  });
 
 });

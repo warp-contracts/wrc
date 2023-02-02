@@ -1,12 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 
 import {
-  ArWallet,
   Contract,
-  ContractDeploy,
   HandlerBasedContract,
-  Warp,
   WriteInteractionResponse,
 } from 'warp-contracts';
 
@@ -118,12 +113,19 @@ export interface TransferFromInput {
   amount: number;
 }
 
-/**
- * Interface describing data required for making a transfer
- */
 export interface ApproveInput {
   spender: string;
   amount: number;
+}
+
+export interface IncreaseAllowanceInput {
+  spender: string;
+  amountToAdd: number;
+}
+
+export interface DecreaseAllowanceInput {
+  spender: string;
+  amountToSubtract: number;
 }
 
 /**
@@ -167,9 +169,21 @@ export interface ERC20Contract extends Contract<ERC20State> {
 
   /**
    * approve tokens to be spent by another account between wallets
-   * @param transfer - data required to perform a transfer, see {@link transfer}
+   * @param input - data required to perform a approve, see {@link input}
    */
-  approve(transfer: ApproveInput): Promise<WriteInteractionResponse | null>;
+  approve(input: ApproveInput): Promise<WriteInteractionResponse | null>;
+
+  /**
+   * atomically increase allowance
+   * @param input - data required to increase allowance, see {@link input}
+   */
+  increaseAllowance(input: IncreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
+
+  /**
+  * atomically increase allowance
+  * @param input - data required to increase allowance, see {@link input}
+  */
+  decreaseAllowance(input: DecreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
 }
 
 /**
@@ -179,6 +193,15 @@ export interface ERC20Contract extends Contract<ERC20State> {
 export interface AtomicAssetContract extends ERC20Contract { }
 
 export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
+
+  async increaseAllowance(input: IncreaseAllowanceInput): Promise<WriteInteractionResponse> {
+    return await this.writeInteraction({ function: 'increaseAllowance', ...input }, { strict: true });
+  }
+
+  async decreaseAllowance(input: DecreaseAllowanceInput): Promise<WriteInteractionResponse> {
+    return await this.writeInteraction({ function: 'decreaseAllowance', ...input }, { strict: true });
+  }
+
   async balanceOf(target: string): Promise<BalanceResult> {
     const interactionResult = await this.viewState({ function: 'balanceOf', target });
 
@@ -214,11 +237,11 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
   }
 
   async evolve(newSrcTxId: string): Promise<WriteInteractionResponse | null> {
-    return Promise.resolve(undefined);
+    throw new Error("Not implemented!")
   }
 
   saveNewSource(newContractSource: string): Promise<string | null> {
-    return Promise.resolve(undefined);
+    throw new Error("Not implemented!")
   }
 
   async transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null> {
@@ -235,29 +258,3 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
 }
 
 export class AtomicAssetContractImpl extends ERC20ContractImpl implements ERC20Contract { }
-
-export async function deployAtomicAsset(
-  Warp: Warp,
-  initialState: AtomicAssetState,
-  ownerWallet: ArWallet
-): Promise<[AtomicAssetState, ContractDeploy]> {
-  // deploying contract using the new SDK.
-  return Warp.createContract
-    .deploy({
-      wallet: ownerWallet,
-      initState: JSON.stringify(initialState),
-      src: fs.readFileSync(path.join(__dirname, '../pkg/atomic-asset-contract_bg.wasm')),
-      wasmSrcCodeDir: path.join(__dirname, '../src'),
-      wasmGlueCode: path.join(__dirname, '../pkg/atomic-asset-contract.js'),
-      data: { 'Content-Type': 'text/html', body: '<h1>HELLO WORLD</h1>' },
-    })
-    .then((txId) => [initialState, txId]);
-}
-
-export async function connectAtomicAsset(Warp: Warp, contractTxId: string, wallet: ArWallet): Promise<AtomicAssetContract> {
-  let contract = new AtomicAssetContractImpl(contractTxId, Warp).setEvaluationOptions({
-    internalWrites: true,
-  }) as AtomicAssetContract;
-
-  return contract.connect(wallet) as AtomicAssetContract;
-}

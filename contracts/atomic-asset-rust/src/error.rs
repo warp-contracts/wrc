@@ -8,4 +8,5 @@ pub enum ContractError {
     OnlyOwnerCanEvolve,
     EvolveNotAllowed,
     AmountHasToBeGtThenZero,
+    AllowanceHasToGtThenZero,
 }

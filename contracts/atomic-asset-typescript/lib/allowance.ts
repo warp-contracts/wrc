@@ -1,4 +1,4 @@
-import { getOr, get, Result, isAddress, isNonNegInt } from "./utils";
+import { getOr, get, Result, isAddress, isNonNegInt, isPositiveInt } from "./utils";
 import { AtomicAssetState, WriteResult } from "./faces";
 
 export type AllowanceResult = {
@@ -50,6 +50,30 @@ export function approve(state: AtomicAssetState, spender: string, amount: number
     isNonNegInt(amount, "amount");
 
     return _approve(state, caller, spender, amount);
+}
+
+export function decreaseAllowance(state: AtomicAssetState, spender: string, amountToSubtract: number): WriteResult {
+    const caller = get(SmartWeave.caller);
+    isAddress(spender, "spender");
+    isPositiveInt(amountToSubtract, "amountToSubtract");
+
+    const { result: { allowance: currentAllowance } } = allowance(state, caller, spender);
+
+    if (amountToSubtract > currentAllowance) {
+        throw new ContractError("Can not decrease allowance below 0")
+    }
+
+    return _approve(state, caller, spender, currentAllowance - amountToSubtract);
+}
+
+export function increaseAllowance(state: AtomicAssetState, spender: string, amountToAdd: number): WriteResult {
+    const caller = get(SmartWeave.caller);
+    isAddress(spender, "spender");
+    isPositiveInt(amountToAdd, "amountToAdd");
+
+    const { result: { allowance: currentAllowance } } = allowance(state, caller, spender);
+
+    return _approve(state, caller, spender, currentAllowance + amountToAdd);
 }
 
 /**

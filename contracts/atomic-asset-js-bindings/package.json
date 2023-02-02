@@ -1,0 +1,17 @@
+{
+  "name": "atomic-asset-js-bindings",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "private": false,
+  "scripts": {
+    "test": "jest --config jest.config.js",
+    "build": "tsc --project tsconfig-build.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+      "warp-contract-utils": "0.0.1"
+  }
+}

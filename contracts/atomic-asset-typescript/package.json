@@ -6,9 +6,8 @@
   "private": false,
   "exports": {
     "contract": "./dist/contracts/atomic-asset-typescript/contract/atomic-asset.js",
-    "lib": "./dist/contracts/atomic-asset-typescript/lib/index.js",
-    "bindings": "./dist/contracts/atomic-asset-typescript/bindings/atomic-asset-js-binding.js"
-  },
+    "lib": "./dist/contracts/atomic-asset-typescript/lib/index.js" 
+   },
   "scripts": {
     "test": "jest --config jest.config.js",
     "build": "tsc --project tsconfig-build.json"
@@ -17,7 +16,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-      "warp-contract-utils": "0.0.1"
+      "warp-contract-utils": "0.0.1",
+      "atomic-asset-js-bindings": "0.0.1"
   },
   "devDependencies": {
     "esbuild": "^0.17.5"

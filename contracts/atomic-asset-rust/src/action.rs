@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
 use crate::error::ContractError;
 use crate::state::State;
+use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase", tag = "function")]
@@ -14,24 +14,33 @@ pub enum Action {
     TransferFrom {
         from: String,
         to: String,
-        amount: u64
+        amount: u64,
     },
     BalanceOf {
-        target: String
+        target: String,
     },
-    TotalSupply {
-    },
+    TotalSupply {},
     Approve {
         spender: String,
         amount: u64,
     },
     Allowance {
         owner: String,
-        spender: String
+        spender: String,
     },
     Evolve {
-        value: String
-    }
+        value: String,
+    },
+    IncreaseAllowance {
+        spender: String,
+        #[serde(rename(deserialize = "amountToAdd"))]
+        amount_to_add: u64,
+    },
+    DecreaseAllowance {
+        spender: String,
+        #[serde(rename(deserialize = "amountToSubtract"))]
+        amount_to_subtract: u64,
+    },
 }
 
 #[derive(Serialize, Deserialize)]
@@ -43,14 +52,14 @@ pub enum QueryResponseMsg {
         balance: u64,
     },
     Allowance {
-            ticker: String,
-            owner: String,
-            spender: String,
-            allowance: u64,
+        ticker: String,
+        owner: String,
+        spender: String,
+        allowance: u64,
     },
     TotalSupply {
-        value: u64
-    }
+        value: u64,
+    },
 }
 
 pub type ActionResult = Result<HandlerResult<State, QueryResponseMsg>, ContractError>;
