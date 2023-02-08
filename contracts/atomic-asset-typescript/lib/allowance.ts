@@ -1,4 +1,4 @@
-import { getOr, get, Result, isAddress, isNonNegInt, isPositiveInt } from "./utils";
+import { getOr, get, Result, isAddress, isUInt } from "./utils";
 import { AtomicAssetState, WriteResult } from "./faces";
 
 export type AllowanceResult = {
@@ -47,7 +47,7 @@ export function allowance(state: AtomicAssetState, owner: string, spender: strin
 export function approve(state: AtomicAssetState, spender: string, amount: number): WriteResult {
     const caller = get(SmartWeave.caller);
     isAddress(spender, "spender");
-    isNonNegInt(amount, "amount");
+    isUInt(amount, "amount");
 
     return _approve(state, caller, spender, amount);
 }
@@ -55,7 +55,7 @@ export function approve(state: AtomicAssetState, spender: string, amount: number
 export function decreaseAllowance(state: AtomicAssetState, spender: string, amountToSubtract: number): WriteResult {
     const caller = get(SmartWeave.caller);
     isAddress(spender, "spender");
-    isPositiveInt(amountToSubtract, "amountToSubtract");
+    isUInt(amountToSubtract, "amountToSubtract");
 
     const { result: { allowance: currentAllowance } } = allowance(state, caller, spender);
 
@@ -69,7 +69,7 @@ export function decreaseAllowance(state: AtomicAssetState, spender: string, amou
 export function increaseAllowance(state: AtomicAssetState, spender: string, amountToAdd: number): WriteResult {
     const caller = get(SmartWeave.caller);
     isAddress(spender, "spender");
-    isPositiveInt(amountToAdd, "amountToAdd");
+    isUInt(amountToAdd, "amountToAdd");
 
     const { result: { allowance: currentAllowance } } = allowance(state, caller, spender);
 

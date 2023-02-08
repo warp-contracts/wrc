@@ -271,8 +271,8 @@ describe('Testing the Atomic Asset Token', () => {
   });
 
 
-  it('should fail to transfer if transfer amount == 0', async () => {
-    await expect(atomicAsset.transfer({ to: user2, amount: 0 })).rejects.toThrowError("Cannot create interaction: [CE:AmountHasToBeGtThenZero]")
+  it('should transfer if transfer amount == 0', async () => {
+    await atomicAsset.transfer({ to: user2, amount: 0 });
   });
 
   it('should increase allowance using increaseAllowance method', async () => {

@@ -7,6 +7,5 @@ pub enum ContractError {
     CallerAllowanceNotEnough(u64),
     OnlyOwnerCanEvolve,
     EvolveNotAllowed,
-    AmountHasToBeGtThenZero,
     AllowanceHasToGtThenZero,
 }

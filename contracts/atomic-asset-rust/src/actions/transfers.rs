@@ -1,8 +1,6 @@
 use crate::action::ActionResult;
 use crate::actions::allowances::{__get_allowance, __set_allowance};
-use crate::error::ContractError::{
-    AmountHasToBeGtThenZero, CallerAllowanceNotEnough, CallerBalanceNotEnough,
-};
+use crate::error::ContractError::{CallerAllowanceNotEnough, CallerBalanceNotEnough};
 use crate::state::State;
 use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
 use warp_wasm_utils::contract_utils::js_imports::SmartWeave;
@@ -10,19 +8,11 @@ use warp_wasm_utils::contract_utils::js_imports::SmartWeave;
 pub fn transfer(state: State, to: String, amount: u64) -> ActionResult {
     let caller = SmartWeave::caller();
 
-    if amount <= 0 {
-        return Err(AmountHasToBeGtThenZero);
-    }
-
     return _transfer(state, caller, to, amount);
 }
 
 pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
     let caller = SmartWeave::caller();
-
-    if amount <= 0 {
-        return Err(AmountHasToBeGtThenZero);
-    }
 
     //Checking allowance
     let allowance = __get_allowance(&state.allowances, &from, &caller);

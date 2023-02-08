@@ -270,8 +270,8 @@ describe('Testing the Atomic Asset Token', () => {
         expect((await atomicAsset.currentState()).owner).toEqual(user3);
     });
 
-    it('should fail to transfer if transfer amount == 0', async () => {
-        await expect(atomicAsset.transfer({ to: user2, amount: 0 })).rejects.toThrowError("Validation error: \"amount\" has to be integer and > 0")
+    it('should transfer if transfer amount == 0', async () => {
+        await atomicAsset.transfer({ to: user2, amount: 0 });
     });
 
     it('should increase allowance using increaseAllowance method', async () => {
