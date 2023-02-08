@@ -73,27 +73,15 @@ export interface EvolveState {
 /**
  * Interface describing base state for all ERC20 contracts.
  */
-export interface ERC20State extends EvolveState {
-  owner: string;
+export interface AtomicAssetState extends Partial<EvolveState> {
+  name?: string;
+  description?: string;
+  owner?: string;
   symbol: string;
-  name: string;
   decimals: number;
   totalSupply: number;
-  balances: {
-    [key: string]: number;
-  };
-  allowances: {
-    [owner: string]: {
-      [spender: string]: number;
-    };
-  };
-}
-
-/**
- * Interface describing base state for Atomic Asset contracts.
- */
-export interface AtomicAssetState extends ERC20State {
-  description?: string;
+  balances: Record<string, number>;
+  allowances: Record<string, Record<string, number>>;
 }
 
 /**
@@ -130,9 +118,9 @@ export interface DecreaseAllowanceInput {
 
 /**
  * A type of {@link Contract} designed specifically for the interaction with
- * ERC20 contract.
+ * atomic-asset contract.
  */
-export interface ERC20Contract extends Contract<ERC20State> {
+export interface AtomicAssetContract extends Contract<AtomicAssetState> {
   /**
    * return the current balance for the given wallet
    * @param target - wallet address
@@ -154,7 +142,7 @@ export interface ERC20Contract extends Contract<ERC20State> {
   /**
    * returns the current contract state
    */
-  currentState(): Promise<ERC20State>;
+  currentState(): Promise<AtomicAssetState>;
   /**
    * allows to transfer tokens between wallets
    * @param transfer - data required to perform a transfer, see {@link transfer}
@@ -186,13 +174,7 @@ export interface ERC20Contract extends Contract<ERC20State> {
   decreaseAllowance(input: DecreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
 }
 
-/**
- * A type of {@link Contract} designed specifically for the interaction with
- * Atomic Asset contract.
- */
-export interface AtomicAssetContract extends ERC20Contract { }
-
-export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implements ERC20Contract {
+export class AtomicAssetContractImpl extends HandlerBasedContract<AtomicAssetState> implements AtomicAssetContract {
 
   async increaseAllowance(input: IncreaseAllowanceInput): Promise<WriteInteractionResponse> {
     return await this.writeInteraction({ function: 'increaseAllowance', ...input }, { strict: true });
@@ -256,5 +238,3 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
     return await this.writeInteraction({ function: 'approve', ...approve }, { strict: true });
   }
 }
-
-export class AtomicAssetContractImpl extends ERC20ContractImpl implements ERC20Contract { }
