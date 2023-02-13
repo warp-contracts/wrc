@@ -6,7 +6,7 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
   const warp = getWarp();
   const [wallet, walletAddress] = await loadWallet(warp, true, __dirname);
   const contractSrc = fs.readFileSync(path.join(__dirname, '../pkg/atomic-asset-contract_bg.wasm'));
-  const AssetAssetPath = fs.readFileSync(path.join(__dirname, './assets/candies.jpeg'));
+  const assetPath = fs.readFileSync(path.join(__dirname, './assets/candies.jpeg'));
 
   let initialState = {
     description: 'This is the test deploy of Atomic Asset token',
@@ -30,7 +30,7 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
     src: contractSrc,
     wasmSrcCodeDir: path.join(__dirname, '../src'),
     wasmGlueCode: path.join(__dirname, '../pkg/atomic-asset-contract.js'),
-    data: { 'Content-Type': 'image/jpeg', body: AssetAssetPath },
+    data: { 'Content-Type': 'image/jpeg', body: assetPath },
   });
 
   setContractTxId(warp.environment, deployment.contractTxId, __dirname);

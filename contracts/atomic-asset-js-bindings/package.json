@@ -11,7 +11,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-      "warp-contract-utils": "0.0.1"
-  }
+  "dependencies": {}
 }

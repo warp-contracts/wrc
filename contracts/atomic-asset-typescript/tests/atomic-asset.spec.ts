@@ -55,7 +55,7 @@ describe('Testing the Atomic Asset Token', () => {
             evolve: '',
         };
 
-        let deployedContract = await deployAtomicAsset(warp, initialState, ownerWallet);
+        let deployedContract = await deployAtomicAsset(warp, initialState, ownerWallet, { 'Content-Type': 'text/html', body: '<h1>Hello</h1>' });
         contractTxId = deployedContract[1].contractTxId;
         console.log('Deployed contract: ', deployedContract);
         atomicAsset = await connectAtomicAsset(warp, contractTxId, ownerWallet);

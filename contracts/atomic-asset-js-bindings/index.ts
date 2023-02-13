@@ -71,7 +71,7 @@ export interface EvolveState {
 }
 
 /**
- * Interface describing base state for all ERC20 contracts.
+ * Interface describing base state for all atomic-asset contracts.
  */
 export interface AtomicAssetState extends Partial<EvolveState> {
   name?: string;
@@ -168,8 +168,8 @@ export interface AtomicAssetContract extends Contract<AtomicAssetState> {
   increaseAllowance(input: IncreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
 
   /**
-  * atomically increase allowance
-  * @param input - data required to increase allowance, see {@link input}
+  * atomically decrease allowance
+  * @param input - data required to decrease allowance, see {@link input}
   */
   decreaseAllowance(input: DecreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
 }

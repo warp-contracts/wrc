@@ -1,16 +1,17 @@
 import { allowance, _approve } from "./allowance";
-import { get, getOr, isAddress, isUInt } from "./utils";
+import { getCaller, getOr, isAddress, isUInt } from "./utils";
 import { AtomicAssetState, WriteResult } from "./faces";
 
 /**
- * Moves `amount`t tokens from the caller’s account to `to`.
+ * Moves `amount` tokens from the caller’s account to `to`.
  * If `to` `new balance == totalSupply => state.owner = to`
  * @param state this contract mutable state
  * @param to receiver of transfer
  * @param amount how much  we want to transfer
+ * @returns updated state {@link state}
  */
 export function transfer(state: AtomicAssetState, to: string, amount: number): WriteResult {
-    const from = get(SmartWeave.caller);
+    const from = getCaller();
     isAddress(to, "to");
     isUInt(amount, "amount");
 
@@ -18,16 +19,17 @@ export function transfer(state: AtomicAssetState, to: string, amount: number): W
 }
 
 /**
- * Moves amount tokens from sender to `to` using the allowance mechanism.
+ * Moves `amount` tokens from sender to `to` using the allowance mechanism.
  * Fails if `allowance < amount`
  * If `to` `new balance == totalSupply => state.owner = to`
  * @param state this contract mutable state
  * @param from From which account we want to transfer asset
  * @param to receiver of transfer
  * @param amount how much of Asset we want to transfer, if amount == totalSupply we are transferring whole Asset
+ * @returns updated state {@link state}
  */
 export function transferFrom(state: AtomicAssetState, from: string, to: string, amount: number): WriteResult {
-    const caller = get(SmartWeave.caller);
+    const caller = getCaller();
     isAddress(to, "to");
     isAddress(from, "from");
     isUInt(amount, "amount");
@@ -44,12 +46,13 @@ export function transferFrom(state: AtomicAssetState, from: string, to: string, 
 }
 
 /**
- * Moves `amount`t tokens from the caller’s account to `to`.
+ * Moves `amount` tokens from the caller’s account to `to`.
  * If `to` `new balance == totalSupply => state.owner = to`
  * @param from From which account we want to transfer asset
  * @param state this contract mutable state
  * @param to receiver of transfer
  * @param amount how much  we want to transfer
+ * @returns updated state {@link state}
  */
 export function _transfer(state: AtomicAssetState, from: string, to: string, amount: number): WriteResult {
     const balances = state.balances;

@@ -1,14 +1,13 @@
 # Warp Request for Comments
 
-This repo contains Warp implementation of SmartWeave contract standards.
-Contracts are written in Rust and then compiled into WASM. WASM provides proper
-sandboxing ensuring execution environment isolation which guarantees security to
-the contracts execution.
+This repo contains Warp and TypeScript implementation of SmartWeave contract standards.
+Contracts are written in Rust(Wasm runtime) or TypeScript(or both).
 
 ## Directories structure
 
 - Contracts
-  - [Atomic Asset](https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-asset)
+  - [Atomic Asset Rust](https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-asset-rust)
+  - [Atomic Asset TypeScript](https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-asset-typescript)
   - [ERC20](https://github.com/warp-contracts/wrc/tree/master/contracts/erc20)
   - [PST](https://github.com/warp-contracts/wrc/tree/master/contracts/pst)
 - Examples

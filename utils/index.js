@@ -1,4 +1,4 @@
-const { WarpFactory, defaultCacheOptions } = require('warp-contracts');
+const { WarpFactory, defaultCacheOptions, TagsParser } = require('warp-contracts');
 const path = require('path');
 const fs = require('fs');
 const yargs = require('yargs/yargs');
@@ -66,19 +66,9 @@ module.exports.loadWallet = async function (warp, generate, dir) {
 };
 
 module.exports.getTag = function getTag(tx, name) {
-  const tags = tx.get('tags');
+  const tagParser = new TagsParser();
 
-  for (const tag of tags) {
-    // decoding tags can throw on invalid utf8 data.
-    try {
-      if (tag.get('name', { decode: true, string: true }) === name) {
-        return tag.get('value', { decode: true, string: true });
-      }
-      // eslint-disable-next-line no-empty
-    } catch (e) { }
-  }
-
-  return false;
+  return tagParser.getTag(tx, name)
 }
 
 const getNetwork = function () {

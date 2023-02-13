@@ -7,7 +7,7 @@ export async function deployAtomicAsset(
   Warp: Warp,
   initialState: AtomicAssetState,
   ownerWallet: ArWallet,
-  data: string = '<h1>HELLO WORLD</h1>'
+  data: { 'Content-Type': string, body: string }
 ): Promise<[AtomicAssetState, ContractDeploy]> {
   // deploying contract using the new SDK.
 
@@ -23,7 +23,7 @@ export async function deployAtomicAsset(
       wallet: ownerWallet,
       initState: JSON.stringify(initialState),
       src: bundledContractSrc.outputFiles[0].text,
-      data: { 'Content-Type': 'text/html', body: '<h1>HELLO WORLD</h1>' },
+      data
     })
     .then((txId) => [initialState, txId]);
 }
@@ -34,3 +34,4 @@ export async function connectAtomicAsset(Warp: Warp, contractTxId: string, walle
   }) as AtomicAssetContract;
   return contract.connect(wallet) as AtomicAssetContract;
 }
+

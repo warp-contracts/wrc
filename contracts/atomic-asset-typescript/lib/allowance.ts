@@ -1,4 +1,4 @@
-import { getOr, get, Result, isAddress, isUInt } from "./utils";
+import { getOr, getCaller, Result, isAddress, isUInt } from "./utils";
 import { AtomicAssetState, WriteResult } from "./faces";
 
 export type AllowanceResult = {
@@ -16,7 +16,7 @@ export type AllowanceResult = {
  * @param state mutable state of contract
  * @param owner
  * @param spender 
- * @returns 
+ * @returns updated state {@link state}
  */
 export function allowance(state: AtomicAssetState, owner: string, spender: string): AllowanceResult {
     isAddress(owner, "owner");
@@ -42,18 +42,25 @@ export function allowance(state: AtomicAssetState, owner: string, spender: strin
  * @param state mutable state of contract
  * @param spender spender
  * @param amount amount to be approved to `transferFrom` by spender
- * @returns 
+ * @returns updated state {@link state}
  */
 export function approve(state: AtomicAssetState, spender: string, amount: number): WriteResult {
-    const caller = get(SmartWeave.caller);
+    const caller = getCaller();
     isAddress(spender, "spender");
     isUInt(amount, "amount");
 
     return _approve(state, caller, spender, amount);
 }
 
+/**
+ * Atomically decrease allowance. Mitigate vector attack from {@link allowance}
+ * @param state mutable state of contract
+ * @param spender spender
+ * @param amountToSubtract amount to subtract from current allowance
+ * @returns updated state {@link state}
+ */
 export function decreaseAllowance(state: AtomicAssetState, spender: string, amountToSubtract: number): WriteResult {
-    const caller = get(SmartWeave.caller);
+    const caller = getCaller();
     isAddress(spender, "spender");
     isUInt(amountToSubtract, "amountToSubtract");
 
@@ -66,8 +73,15 @@ export function decreaseAllowance(state: AtomicAssetState, spender: string, amou
     return _approve(state, caller, spender, currentAllowance - amountToSubtract);
 }
 
+/**
+ * Atomically decrease allowance. Mitigate vector attack from {@link allowance}
+ * @param state mutable state of contract
+ * @param spender spender
+ * @param amountToSubtract amount to subtract from current allowance
+ * @returns updated state {@link state}
+ */
 export function increaseAllowance(state: AtomicAssetState, spender: string, amountToAdd: number): WriteResult {
-    const caller = get(SmartWeave.caller);
+    const caller = getCaller();
     isAddress(spender, "spender");
     isUInt(amountToAdd, "amountToAdd");
 
@@ -83,7 +97,7 @@ export function increaseAllowance(state: AtomicAssetState, spender: string, amou
  * @param owner owner or partial owner of asset
  * @param spender spender
  * @param amount amount to be approved to `transferFrom` by spender
- * @returns 
+ * @returns updated state {@link state}
  */
 export function _approve(state: AtomicAssetState, owner: string, spender: string, amount: number): WriteResult {
     if (amount > 0) {

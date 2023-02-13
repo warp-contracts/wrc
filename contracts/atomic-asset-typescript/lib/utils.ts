@@ -6,12 +6,13 @@ export function getOr<T = any>(value: T, defaultVal: T): T {
     return defaultVal;
 }
 
-export function get(value: any) {
-    if (!value) {
-        throw new ContractError(`Undefined value!`);
+export function getCaller() {
+    const mCaller = SmartWeave.caller;
+    if (!mCaller) {
+        throw new ContractError("SmartWeave.caller is undefined");
     }
 
-    return value;
+    return mCaller;
 }
 
 export function Result(data: any) {
