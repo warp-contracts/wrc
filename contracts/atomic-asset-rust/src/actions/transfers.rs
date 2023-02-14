@@ -31,7 +31,7 @@ pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) ->
     return _transfer(state, from, to, amount);
 }
 
-fn _transfer(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
+pub fn _transfer(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
     // Checking if caller has enough funds
     let balances = &mut state.balances;
     let from_balance = *balances.get(&from).unwrap_or(&0);

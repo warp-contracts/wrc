@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
-const net = require('net');
 const argv = yargs(hideBin(process.argv)).argv;
 
 getTmpContractTxIdPath = function (network, dir, name) {

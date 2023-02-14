@@ -1,11 +1,18 @@
 [package]
-name = "atomic-asset"
+name = "atomic_asset"
 version = "0.1.0"
 authors = ["dev@redstone.finance"]
 edition = "2021"
+exclude = ["scripts/*"]
+description = "atomic-asset implementation in rust"
+license = "MIT"
+homepage = "https://academy.warp.cc"
+documentation = "https://academy.warp.cc"
+readme = "README.md"
+repository = "https://github.com/warp-contracts/wrc/tree/master/contracts/atomic-asset-rust"
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 wasm-bindgen = { version = "0.2.79", features = ["serde-serialize"] }
