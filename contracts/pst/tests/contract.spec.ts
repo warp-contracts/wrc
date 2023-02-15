@@ -153,7 +153,7 @@ describe('Testing the Profit Sharing Token', () => {
     );
   });
 
-  it.skip('should properly perform internal write', async () => {
+  it('should properly perform internal write', async () => {
     expect((await pst2.currentBalance('uhE-QeYS8i4pmUtnxQyHD7dzXFNaJ9oMK-IM-QPNY6M')).balance).toEqual(10000000);
 
     await pst.writeInteraction({
