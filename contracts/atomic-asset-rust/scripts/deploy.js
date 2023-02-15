@@ -18,10 +18,7 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
       [walletAddress]: 1000000,
     },
     allowances: {},
-    settings: null,
     owner: walletAddress,
-    canEvolve: true,
-    evolve: '',
   };
 
   const deployment = await warp.createContract.deploy({

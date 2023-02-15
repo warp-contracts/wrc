@@ -10,7 +10,6 @@ import {
  */
 export interface BalanceResult {
   balance: number;
-  ticker: string;
   target: string;
 }
 
@@ -25,55 +24,16 @@ export interface TotalSupplyResult {
  * The result from the "allowance" view method on the Atomic Asset Contract.
  */
 export interface AllowanceResult {
-  ticker: string;
   owner: string;
   spender: string;
   allowance: number;
 }
 
-/**
- * Interface for all contracts the implement the {@link Evolve} feature.
- * Evolve is a feature that allows to change contract's source
- * code, without having to deploy a new contract.
- * See ({@link Evolve})
- */
-export interface EvolvingContract {
-  /**
-   * allows to post new contract source on Arweave
-   * @param newContractSource - new contract source...
-   */
-  saveNewSource(newContractSource: string): Promise<string | null>;
-  /**
-   * effectively evolves the contract to the source.
-   * This requires the {@link saveNewSource} to be called first
-   * and its transaction to be confirmed by the network.
-   * @param newSrcTxId - result of the {@link saveNewSource} method call.
-   */
-  evolve(newSrcTxId: string): Promise<string | null>;
-}
-/**
- * Interface describing state for all Evolve-compatible contracts.
- */
-export interface EvolveState {
-  settings: any[] | unknown | null;
-  /**
-   * whether contract is allowed to evolve. seems to default to true..
-   */
-  canEvolve: boolean;
-  /**
-   * the transaction id of the Arweave transaction with the updated source code.
-   */
-  evolve: string;
-  /**
-   * the owner of this contract who can initiate evolution
-   */
-  owner: string;
-}
 
 /**
  * Interface describing base state for all atomic-asset contracts.
  */
-export interface AtomicAssetState extends Partial<EvolveState> {
+export interface AtomicAssetState {
   name?: string;
   description?: string;
   owner?: string;
@@ -216,14 +176,6 @@ export class AtomicAssetContractImpl extends HandlerBasedContract<AtomicAssetSta
 
   async currentState() {
     return (await super.readState()).cachedValue.state;
-  }
-
-  async evolve(newSrcTxId: string): Promise<WriteInteractionResponse | null> {
-    throw new Error("Not implemented!")
-  }
-
-  saveNewSource(newContractSource: string): Promise<string | null> {
-    throw new Error("Not implemented!")
   }
 
   async transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null> {

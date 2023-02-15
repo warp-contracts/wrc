@@ -5,7 +5,6 @@ use warp_wasm_utils::contract_utils::handler_result::HandlerResult::QueryRespons
 pub fn balance_of(state: State, target: String) -> ActionResult {
     Ok(QueryResponse(Balance {
         balance: *state.balances.get(&target).unwrap_or(&0),
-        ticker: state.symbol,
         target,
     }))
 }

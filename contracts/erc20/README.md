@@ -76,7 +76,6 @@ Returns the current balance for the given wallet.
 ```typescript
 interface BalanceResult {
   balance: number;
-  ticker: string;
   target: string;
 }
 ```
@@ -125,7 +124,6 @@ Returns the amount which `spender` is allowed to withdraw from `owner`.
 
 ```typescript
 interface AllowanceResult {
-  ticker: string;
   owner: string;
   spender: string;
   allowance: number;

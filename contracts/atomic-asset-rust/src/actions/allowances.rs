@@ -8,7 +8,6 @@ use warp_wasm_utils::contract_utils::js_imports::Transaction;
 
 pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
     Ok(QueryResponse(Allowance {
-        ticker: state.symbol,
         allowance: __get_allowance(&state.allowances, &owner, &spender),
         owner,
         spender,

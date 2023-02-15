@@ -4,7 +4,6 @@ import { isAddress, Result } from "./utils"
 export type BalanceOfResult = {
     result: {
         balance: string,
-        ticker: string,
         target: string
     }
 }
@@ -20,7 +19,6 @@ export function balanceOf(state: AtomicAssetState, target: string) {
 
     return Result({
         balance: state.balances[target] ?? 0,
-        ticker: state.symbol,
         target
     })
 }

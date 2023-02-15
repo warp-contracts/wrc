@@ -3,7 +3,6 @@ use crate::actions::allowances::{allowance, decrease_allowance};
 use crate::actions::allowances::{approve, increase_allowance};
 use crate::actions::balance::balance_of;
 use crate::actions::balance::total_supply;
-use crate::actions::evolve::evolve;
 use crate::actions::transfers::transfer;
 use crate::actions::transfers::transfer_from;
 use crate::state::State;
@@ -16,7 +15,6 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
         Action::TotalSupply {} => total_supply(current_state),
         Action::Approve { spender, amount } => approve(current_state, spender, amount),
         Action::Allowance { owner, spender } => allowance(current_state, owner, spender),
-        Action::Evolve { value } => evolve(current_state, value),
         Action::IncreaseAllowance {
             spender,
             amount_to_add,

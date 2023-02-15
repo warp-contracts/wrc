@@ -41,7 +41,6 @@ describe('Testing the Atomic Asset Token', () => {
 
     initialState = {
       description: 'This is the test of Atomic Asset token',
-      settings: null,
       symbol: 'atomic-asset-test',
       name: 'Sample Atomic Asset token',
       decimals: 2,
@@ -51,8 +50,6 @@ describe('Testing the Atomic Asset Token', () => {
       },
       allowances: {},
       owner: owner,
-      canEvolve: true,
-      evolve: '',
     };
 
     let deployedContract = await deployAtomicAsset(warp, initialState, ownerWallet, { "Content-Type": "text/html", "body": "<h1>Hello</h1>" });

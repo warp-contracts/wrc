@@ -16,7 +16,6 @@ import {
  */
 export interface BalanceResult {
   balance: number;
-  ticker: string;
   target: string;
 }
 
@@ -31,7 +30,6 @@ export interface TotalSupplyResult {
  * The result from the "allowance" view method on the ERC20 Contract.
  */
 export interface AllowanceResult {
-  ticker: string;
   owner: string;
   spender: string;
   allowance: number;

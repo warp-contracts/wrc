@@ -28,9 +28,6 @@ pub enum Action {
         owner: String,
         spender: String,
     },
-    Evolve {
-        value: String,
-    },
     IncreaseAllowance {
         spender: String,
         #[serde(rename(deserialize = "amountToAdd"))]
@@ -47,12 +44,10 @@ pub enum Action {
 #[serde(rename_all = "camelCase", untagged)]
 pub enum QueryResponseMsg {
     Balance {
-        ticker: String,
         target: String,
         balance: u64,
     },
     Allowance {
-        ticker: String,
         owner: String,
         spender: String,
         allowance: u64,

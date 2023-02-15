@@ -3,7 +3,6 @@ import { AtomicAssetState, WriteResult } from "./faces";
 
 export type AllowanceResult = {
     result: {
-        ticker: string,
         allowance: number,
         owner: string,
         spender: string
@@ -30,7 +29,6 @@ export function allowance(state: AtomicAssetState, owner: string, spender: strin
         0)
 
     return Result({
-        ticker: state.symbol,
         allowance,
         owner,
         spender
