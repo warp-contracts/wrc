@@ -223,14 +223,13 @@ export async function deployERC20(
   ownerWallet: ArWallet
 ): Promise<[ERC20State, ContractDeploy]> {
   // deploying contract using the new SDK.
-  return Warp.createContract
-    .deploy({
-      wallet: ownerWallet,
-      initState: JSON.stringify(initialState),
-      src: fs.readFileSync(path.join(__dirname, '../pkg/erc20-contract_bg.wasm')),
-      wasmSrcCodeDir: path.join(__dirname, '../src'),
-      wasmGlueCode: path.join(__dirname, '../pkg/erc20-contract.js'),
-    })
+  return Warp.deploy({
+    wallet: ownerWallet,
+    initState: JSON.stringify(initialState),
+    src: fs.readFileSync(path.join(__dirname, '../pkg/erc20-contract_bg.wasm')),
+    wasmSrcCodeDir: path.join(__dirname, '../src'),
+    wasmGlueCode: path.join(__dirname, '../pkg/erc20-contract.js'),
+  })
     .then((txId) => [initialState, txId]);
 }
 

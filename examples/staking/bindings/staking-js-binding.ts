@@ -156,14 +156,13 @@ export async function deployStaking(
   ownerWallet: ArWallet
 ): Promise<[StakingState, ContractDeploy]> {
   // deploying contract using the new SDK.
-  return warp.createContract
-    .deploy({
-      wallet: ownerWallet,
-      initState: JSON.stringify(initialState),
-      src: fs.readFileSync(path.join(__dirname, '../pkg/staking-contract_bg.wasm')),
-      wasmSrcCodeDir: path.join(__dirname, '../src'),
-      wasmGlueCode: path.join(__dirname, '../pkg/staking-contract.js'),
-    })
+  return warp.deploy({
+    wallet: ownerWallet,
+    initState: JSON.stringify(initialState),
+    src: fs.readFileSync(path.join(__dirname, '../pkg/staking-contract_bg.wasm')),
+    wasmSrcCodeDir: path.join(__dirname, '../src'),
+    wasmGlueCode: path.join(__dirname, '../pkg/staking-contract.js'),
+  })
     .then((txId) => [initialState, txId]);
 }
 

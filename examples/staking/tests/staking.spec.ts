@@ -6,6 +6,7 @@ import { connectERC20, deployERC20, ERC20Contract, ERC20State } from 'erc20/bind
 
 import { connectStaking, deployStaking, StakingContract, StakingState } from '../bindings/staking-js-binding';
 import { getTag } from 'warp-contract-utils';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 jest.setTimeout(120000);
 
@@ -38,7 +39,7 @@ describe('Testing the Staking Logic', () => {
     //LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    warp = WarpFactory.forLocal(1821);
+    warp = WarpFactory.forLocal(1821).use(new DeployPlugin());
 
     ownerWallet = (await warp.generateWallet()).jwk;
     owner = await warp.arweave.wallets.jwkToAddress(ownerWallet);

@@ -5,10 +5,10 @@ import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts
 import { AtomicAssetState, AtomicAssetContract } from "atomic-asset-js-bindings";
 import { connectAtomicAsset, deployAtomicAsset as rustDeploy } from '../rust-impl';
 import { deployAtomicAsset as tsDeploy } from '../ts-impl';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 jest.setTimeout(30000);
 
-const getPort = impl => impl === "Rust" ? 1820 : 1820;
 const deployAtomicAsset = async (impl, warp, initialState, ownerWallet, data) => {
   if (impl === "Rust") {
     return await rustDeploy(warp, initialState, ownerWallet, data);
@@ -22,7 +22,7 @@ describe('Atomic Assets', () => {
   let arlocal: ArLocal;
 
   beforeAll(async () => {
-    arlocal = new ArLocal(getPort("Rust"), false);
+    arlocal = new ArLocal(1820, false);
     await arlocal.start();
   });
 
@@ -51,7 +51,7 @@ describe('Atomic Assets', () => {
     beforeAll(async () => {
       LoggerFactory.INST.logLevel('error');
 
-      warp = WarpFactory.forLocal(getPort(implementation));
+      warp = WarpFactory.forLocal(1820).use(new DeployPlugin());
 
       ({ jwk: ownerWallet, address: owner } = await warp.generateWallet());
       ({ jwk: user2Wallet, address: user2 } = await warp.generateWallet());

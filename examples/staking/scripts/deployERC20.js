@@ -23,7 +23,7 @@ const { contractSrc, wasmGlueCode, wasmSrcCodeDir } = require('erc20/utils');
     evolve: '',
   };
 
-  let deployment = await warp.createContract.deploy({
+  let deployment = await warp.deploy({
     wallet: ownerWallet,
     initState: JSON.stringify(initialERC20State),
     src: fs.readFileSync(contractSrc),

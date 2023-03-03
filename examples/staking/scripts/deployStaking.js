@@ -19,7 +19,7 @@ const { getWarp, setContractTxId, loadWallet, getContractTxId, requireModule } =
     stakes: {},
   };
 
-  let deployment = await warp.createContract.deploy({
+  let deployment = await warp.deploy({
     wallet: ownerWallet,
     initState: JSON.stringify(initialStakingState),
     src: fs.readFileSync(path.join(__dirname, '../pkg/staking-contract_bg.wasm')),

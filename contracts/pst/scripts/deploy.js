@@ -18,7 +18,7 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
     },
   };
 
-  const deployment = await warp.createContract.deploy({
+  const deployment = await warp.deploy({
     wallet,
     initState: JSON.stringify(initialState),
     src: contractSrc,

@@ -9,7 +9,6 @@
     "lib": "./dist/contracts/atomic-asset-typescript/lib/index.js" 
    },
   "scripts": {
-    "test": "jest --config jest.config.js",
     "build": "tsc --project tsconfig-build.json"
   },
   "keywords": [],
