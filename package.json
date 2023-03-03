@@ -14,9 +14,8 @@
   },
   "scripts": {
     "build:atomic-asset-rust": "yarn workspace atomic-asset-rust build",
-    "test:atomic-asset-rust": "yarn workspace atomic-asset-rust test",
     "build:atomic-asset-typescript": "yarn workspace atomic-asset-typescript build",
-    "test:atomic-asset-typescript": "yarn workspace atomic-asset-typescript test",
+    "test:atomic-asset-tests": "yarn workspace atomic-asset-tests test",
     "build:erc20": "yarn workspace erc20 build",
     "test:erc20": "yarn workspace erc20 test",
     "build:pst": "yarn workspace pst build",

@@ -1,5 +1,6 @@
 import { getOr, getCaller, Result, isAddress, isUInt } from "./utils";
 import { AtomicAssetState, WriteResult } from "./faces";
+import { ContractErrors } from "./error";
 
 export type AllowanceResult = {
     result: {
@@ -15,7 +16,7 @@ export type AllowanceResult = {
  * @param state mutable state of contract
  * @param owner
  * @param spender 
- * @returns updated state {@link state}
+ * @returns allowanceResult {@link AllowanceResult}
  */
 export function allowance(state: AtomicAssetState, owner: string, spender: string): AllowanceResult {
     isAddress(owner, "owner");
@@ -65,7 +66,7 @@ export function decreaseAllowance(state: AtomicAssetState, spender: string, amou
     const { result: { allowance: currentAllowance } } = allowance(state, caller, spender);
 
     if (amountToSubtract > currentAllowance) {
-        throw new ContractError("Can not decrease allowance below 0")
+        throw ContractErrors.AllowanceHasToGtThenZero();
     }
 
     return _approve(state, caller, spender, currentAllowance - amountToSubtract);

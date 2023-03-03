@@ -38,6 +38,7 @@ pub enum Action {
         #[serde(rename(deserialize = "amountToSubtract"))]
         amount_to_subtract: u64,
     },
+    Owner {},
 }
 
 #[derive(Serialize, Deserialize)]
@@ -54,6 +55,9 @@ pub enum QueryResponseMsg {
     },
     TotalSupply {
         value: u64,
+    },
+    Owner {
+        value: Option<String>,
     },
 }
 

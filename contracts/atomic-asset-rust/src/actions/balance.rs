@@ -1,4 +1,6 @@
-use crate::action::{ActionResult, QueryResponseMsg::Balance, QueryResponseMsg::TotalSupply};
+use crate::action::{
+    ActionResult, QueryResponseMsg::Balance, QueryResponseMsg::Owner, QueryResponseMsg::TotalSupply,
+};
 use crate::state::State;
 use warp_wasm_utils::contract_utils::handler_result::HandlerResult::QueryResponse;
 
@@ -13,4 +15,8 @@ pub fn total_supply(state: State) -> ActionResult {
     Ok(QueryResponse(TotalSupply {
         value: state.total_supply,
     }))
+}
+
+pub fn owner(state: State) -> ActionResult {
+    Ok(QueryResponse(Owner { value: state.owner }))
 }

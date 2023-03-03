@@ -3,6 +3,11 @@ import * as path from "path";
 import * as fs from "fs";
 import { ArWallet, ContractDeploy, Warp } from "warp-contracts";
 
+const RUST_CONTRACT_BASE_PATH = path.join(__dirname, '../atomic-asset-rust');
+const SRC_PATH = fs.readFileSync(path.join(RUST_CONTRACT_BASE_PATH, '/pkg/atomic-asset-contract_bg.wasm'));
+const WASM_SRC_CODE_DIR = path.join(RUST_CONTRACT_BASE_PATH, 'src');
+const WASM_GLUE_CODE = path.join(RUST_CONTRACT_BASE_PATH, '/pkg/atomic-asset-contract.js');
+
 export async function deployAtomicAsset(
     Warp: Warp,
     initialState: AtomicAssetState,
@@ -13,9 +18,9 @@ export async function deployAtomicAsset(
     return Warp.deploy({
         wallet: ownerWallet,
         initState: JSON.stringify(initialState),
-        src: fs.readFileSync(path.join(__dirname, '../pkg/atomic-asset-contract_bg.wasm')),
-        wasmSrcCodeDir: path.join(__dirname, '../src'),
-        wasmGlueCode: path.join(__dirname, '../pkg/atomic-asset-contract.js'),
+        src: SRC_PATH,
+        wasmSrcCodeDir: WASM_SRC_CODE_DIR,
+        wasmGlueCode: WASM_GLUE_CODE,
         data
     })
         .then((txId) => [initialState, txId]);

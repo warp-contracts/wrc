@@ -1,6 +1,7 @@
 import { allowance, _approve } from "./allowance";
 import { getCaller, getOr, isAddress, isUInt } from "./utils";
 import { AtomicAssetState, WriteResult } from "./faces";
+import { ContractErrors } from "./error";
 
 /**
  * Moves `amount` tokens from the caller’s account to `to`.
@@ -37,7 +38,7 @@ export function transferFrom(state: AtomicAssetState, from: string, to: string, 
     const { result: { allowance: allowed } } = allowance(state, from, caller);
 
     if (allowed < amount) {
-        throw new ContractError(`Caller allowance not enough ${allowed}`);
+        throw ContractErrors.CallerAllowanceNotEnough(allowed);
     }
 
     _approve(state, from, caller, allowed - amount);
@@ -60,7 +61,7 @@ export function _transfer(state: AtomicAssetState, from: string, to: string, amo
     const fromBalance = getOr(balances[from], 0);
 
     if (fromBalance < amount) {
-        throw new ContractError(`Caller balance not enough ${fromBalance}`);
+        throw ContractErrors.CallerBalanceNotEnough(fromBalance);
     }
 
     const newFromBalance = fromBalance - amount;

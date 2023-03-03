@@ -3,7 +3,6 @@ import { JWKInterface } from 'arweave/node/lib/wallet';
 import { getTag } from 'warp-contract-utils';
 import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
 import { AtomicAssetState, AtomicAssetContract } from "atomic-asset-js-bindings";
-import { deployAtomicAsset, connectAtomicAsset } from "../helpers/helpers";
 
 jest.setTimeout(30000);
 
