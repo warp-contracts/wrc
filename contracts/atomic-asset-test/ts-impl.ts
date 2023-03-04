@@ -12,7 +12,7 @@ export async function deployAtomicAsset(
     // deploying contract using the new SDK.
 
     const bundledContractSrc = await build({
-        entryPoints: [path.join(__dirname, '../atomic-asset-typescript/dist/contracts/atomic-asset-typescript/contract/atomic-asset.js')],
+        entryPoints: [path.join(__dirname, '../atomic-asset-typescript/dist/contract/atomic-asset.js')],
         bundle: true,
         write: false,
         outfile: 'bundled.js'

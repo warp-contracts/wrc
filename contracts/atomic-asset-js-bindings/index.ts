@@ -147,7 +147,6 @@ export interface AtomicAssetContract extends Contract<AtomicAssetState> {
 }
 
 export class AtomicAssetContractImpl extends HandlerBasedContract<AtomicAssetState> implements AtomicAssetContract {
-
   async increaseAllowance(input: IncreaseAllowanceInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse> {
     return await this.writeInteraction({ function: 'increaseAllowance', ...input }, options);
   }

@@ -36,7 +36,7 @@ export function handle(state: AtomicAssetState, action: Action) {
 }
 
 
-export enum FUNCTIONS {
+enum FUNCTIONS {
     TRANSFER = 'transfer',
     TRANSFER_FROM = 'transferFrom',
     ALLOWANCE = 'allowance',
