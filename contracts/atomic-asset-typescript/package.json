@@ -2,23 +2,20 @@
   "name": "atomic-asset-typescript",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "private": false,
-  "exports": {
-    "contract": "./dist/contracts/atomic-asset-typescript/contract/atomic-asset.js",
-    "lib": "./dist/contracts/atomic-asset-typescript/lib/index.js" 
-   },
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig-build.json"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-      "warp-contract-utils": "0.0.1",
-      "atomic-asset-js-bindings": "0.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "esbuild": "^0.17.5"
+  },
+  "peerDependencies": {
+    "warp-contract-utils": "0.0.1"
   }
 }

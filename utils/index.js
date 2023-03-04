@@ -5,6 +5,7 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const { DeployPlugin } = require('warp-contracts-plugin-deploy');
 const argv = yargs(hideBin(process.argv)).argv;
+const { ArweaveSigner } = require('warp-contracts-plugin-deploy');
 
 getTmpContractTxIdPath = function (network, dir, name) {
   return path.join(dir, `./tmp/${network}_contract-tx-id${name ? `-${name}` : ''}.txt`);
@@ -62,7 +63,7 @@ module.exports.loadWallet = async function (warp, generate, dir) {
     }
   }
   let address = await warp.arweave.wallets.getAddress(wallet);
-  return [wallet, address];
+  return [new ArweaveSigner(wallet), address];
 };
 
 module.exports.getTag = function getTag(tx, name) {

@@ -30,8 +30,6 @@
     "node": ">=16.5"
   },
   "dependencies": {
-    "warp-contract-utils": "0.0.1",
-    "atomic-asset-js-bindings": "0.0.1"
   },
   "peerDependencies": {
     "@types/jest": "*",
@@ -41,7 +39,7 @@
     "arlocal": "*",
     "arweave": "*",
     "ts-jest": "*",
-    "warp-contracts": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "warp-contracts": "*"
   }
 }

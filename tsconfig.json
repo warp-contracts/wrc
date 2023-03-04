@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Node",
-    "target": "ES2018",
+    "moduleResolution": "node",
+    "target": "ES2019",
     "lib": ["dom"],
     "esModuleInterop": true,
     "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
+    "module": "commonjs",
   }
 }
