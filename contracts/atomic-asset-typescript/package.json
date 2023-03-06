@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "private": false,
-  "exports": {
-    "./contract": "./dist/contract/atomic-asset.js",
-    "./lib": "./dist/lib/index.js"
-  },
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig-build.json"
   },

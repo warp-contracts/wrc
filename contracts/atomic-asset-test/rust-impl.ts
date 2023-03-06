@@ -1,4 +1,4 @@
-import { AtomicAssetState, AtomicAssetContract, AtomicAssetContractImpl } from "atomic-asset-js-bindings";
+§import { AtomicAssetState, AtomicAssetContract, AtomicAssetContractImpl } from "atomic-asset-js-bindings";
 import * as path from "path";
 import * as fs from "fs";
 import { ArWallet, ContractDeploy, Warp } from "warp-contracts";

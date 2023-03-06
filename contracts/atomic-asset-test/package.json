@@ -4,13 +4,8 @@
   "description": "",
   "main": "index.js",
   "private": false,
-  "exports": {
-    "contract": "./dist/contracts/atomic-asset-typescript/contract/atomic-asset.js",
-    "lib": "./dist/contracts/atomic-asset-typescript/lib/index.js"
-  },
   "scripts": {
-    "test": "jest --config jest.config.js",
-    "build": "tsc --project tsconfig-build.json"
+    "test": "jest --config jest.config.js"
   },
   "keywords": [],
   "author": "",
