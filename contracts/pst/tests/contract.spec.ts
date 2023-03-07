@@ -13,6 +13,7 @@ import {
 } from 'warp-contracts';
 import path from 'path';
 import { getTag } from 'warp-contract-utils';
+import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 
 jest.setTimeout(60000);
 
@@ -42,7 +43,7 @@ describe('Testing the Profit Sharing Token', () => {
     LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
-    warp = WarpFactory.forLocal(1820);
+    warp = WarpFactory.forLocal(1820).use(new DeployPlugin());
 
     ({ jwk: wallet, address: walletAddress } = await warp.generateWallet());
 
@@ -61,7 +62,7 @@ describe('Testing the Profit Sharing Token', () => {
     };
 
     // deploying contract using the new SDK.
-    ({ contractTxId: contractTxId } = await warp.createContract.deploy({
+    ({ contractTxId: contractTxId } = await warp.deploy({
       wallet,
       initState: JSON.stringify(initialState),
       src: contractSrc,
@@ -71,7 +72,7 @@ describe('Testing the Profit Sharing Token', () => {
 
     console.log(contractTxId);
 
-    ({ contractTxId: foreignContractTxId } = await warp.createContract.deploy({
+    ({ contractTxId: foreignContractTxId } = await warp.deploy({
       wallet,
       initState: JSON.stringify({
         ...initialState,
@@ -172,10 +173,10 @@ describe('Testing the Profit Sharing Token', () => {
 
     const newSource = fs.readFileSync(path.join(__dirname, './data/token-evolve.js'), 'utf8');
 
-    const srcTx = await warp.createSourceTx({
+    const srcTx = await warp.createSource({
       src: newSource,
     }, wallet);
-    const newSrcTxId = await warp.saveSourceTx(srcTx);
+    const newSrcTxId = await warp.saveSource(srcTx);
 
     await pst.evolve(newSrcTxId);
 

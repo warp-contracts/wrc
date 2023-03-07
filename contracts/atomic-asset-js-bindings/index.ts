@@ -2,6 +2,7 @@
 import {
   Contract,
   HandlerBasedContract,
+  WriteInteractionOptions,
   WriteInteractionResponse,
 } from 'warp-contracts';
 
@@ -29,6 +30,12 @@ export interface AllowanceResult {
   allowance: number;
 }
 
+/**
+ * The result from the "owner" view method on the Atomic Asset Contract.
+ */
+export interface OwnerResult {
+  owner?: string;
+}
 
 /**
  * Interface describing base state for all atomic-asset contracts.
@@ -100,6 +107,11 @@ export interface AtomicAssetContract extends Contract<AtomicAssetState> {
   allowance(owner: string, spender: string): Promise<AllowanceResult>;
 
   /**
+   * return the owner of atomic assets if exists
+   */
+  owner(): Promise<OwnerResult>;
+
+  /**
    * returns the current contract state
    */
   currentState(): Promise<AtomicAssetState>;
@@ -107,41 +119,40 @@ export interface AtomicAssetContract extends Contract<AtomicAssetState> {
    * allows to transfer tokens between wallets
    * @param transfer - data required to perform a transfer, see {@link transfer}
    */
-  transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null>;
+  transfer(transfer: TransferInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null>;
 
   /**
    * allows transferring tokens using the allowance mechanism
    * @param transfer - data required to perform a transfer, see {@link transfer}
    */
-  transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null>;
+  transferFrom(transfer: TransferFromInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null>;
 
   /**
    * approve tokens to be spent by another account between wallets
    * @param input - data required to perform a approve, see {@link input}
    */
-  approve(input: ApproveInput): Promise<WriteInteractionResponse | null>;
+  approve(input: ApproveInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null>;
 
   /**
    * atomically increase allowance
    * @param input - data required to increase allowance, see {@link input}
    */
-  increaseAllowance(input: IncreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
+  increaseAllowance(input: IncreaseAllowanceInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null>;
 
   /**
   * atomically decrease allowance
   * @param input - data required to decrease allowance, see {@link input}
   */
-  decreaseAllowance(input: DecreaseAllowanceInput): Promise<WriteInteractionResponse | null>;
+  decreaseAllowance(input: DecreaseAllowanceInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null>;
 }
 
 export class AtomicAssetContractImpl extends HandlerBasedContract<AtomicAssetState> implements AtomicAssetContract {
-
-  async increaseAllowance(input: IncreaseAllowanceInput): Promise<WriteInteractionResponse> {
-    return await this.writeInteraction({ function: 'increaseAllowance', ...input }, { strict: true });
+  async increaseAllowance(input: IncreaseAllowanceInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse> {
+    return await this.writeInteraction({ function: 'increaseAllowance', ...input }, options);
   }
 
-  async decreaseAllowance(input: DecreaseAllowanceInput): Promise<WriteInteractionResponse> {
-    return await this.writeInteraction({ function: 'decreaseAllowance', ...input }, { strict: true });
+  async decreaseAllowance(input: DecreaseAllowanceInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse> {
+    return await this.writeInteraction({ function: 'decreaseAllowance', ...input }, options);
   }
 
   async balanceOf(target: string): Promise<BalanceResult> {
@@ -174,19 +185,30 @@ export class AtomicAssetContractImpl extends HandlerBasedContract<AtomicAssetSta
     return interactionResult.result as AllowanceResult;
   }
 
+  async owner(): Promise<OwnerResult> {
+    const ownerResult = await this.viewState({ function: 'owner' });
+
+    if (ownerResult.type !== 'ok') {
+      throw Error(ownerResult.errorMessage);
+    }
+
+    return ownerResult.result as OwnerResult;
+  }
+
   async currentState() {
     return (await super.readState()).cachedValue.state;
   }
 
-  async transfer(transfer: TransferInput): Promise<WriteInteractionResponse | null> {
-    return await this.writeInteraction({ function: 'transfer', ...transfer }, { strict: true });
+  async transfer(transfer: TransferInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null> {
+    return await this.writeInteraction({ function: 'transfer', ...transfer }, options);
   }
 
-  async transferFrom(transfer: TransferFromInput): Promise<WriteInteractionResponse | null> {
-    return await this.writeInteraction({ function: 'transferFrom', ...transfer }, { strict: true });
+  async transferFrom(transfer: TransferFromInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null> {
+    return await this.writeInteraction({ function: 'transferFrom', ...transfer }, options);
   }
 
-  async approve(approve: ApproveInput): Promise<WriteInteractionResponse | null> {
-    return await this.writeInteraction({ function: 'approve', ...approve }, { strict: true });
+  async approve(approve: ApproveInput, options?: WriteInteractionOptions): Promise<WriteInteractionResponse | null> {
+    return await this.writeInteraction({ function: 'approve', ...approve }, options);
   }
+
 }

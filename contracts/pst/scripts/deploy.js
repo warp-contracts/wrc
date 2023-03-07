@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
+const { ArweaveSigner } = require('warp-contracts-plugin-deploy');
 
 (async () => {
   const warp = getWarp();
@@ -18,8 +19,8 @@ const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
     },
   };
 
-  const deployment = await warp.createContract.deploy({
-    wallet,
+  const deployment = await warp.deploy({
+    wallet: new ArweaveSigner(wallet),
     initState: JSON.stringify(initialState),
     src: contractSrc,
     wasmSrcCodeDir: path.join(__dirname, '../src'),

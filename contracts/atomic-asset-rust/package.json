@@ -24,15 +24,12 @@
     "transfer-from:mainnet": "node scripts/interact-transfer-from.js --network mainnet",
     "jump-transfers:local": "node scripts/jump-transfers.js --network local",
     "jump-transfers:testnet": "node scripts/jump-transfers.js --network testnet",
-    "jump-transfers:mainnet": "node scripts/jump-transfers.js --network mainnet",
-    "test": "jest"
+    "jump-transfers:mainnet": "node scripts/jump-transfers.js --network mainnet"
   },
   "engines": {
     "node": ">=16.5"
   },
   "dependencies": {
-    "warp-contract-utils": "0.0.1",
-    "atomic-asset-js-bindings": "0.0.1"
   },
   "peerDependencies": {
     "@types/jest": "*",
@@ -42,7 +39,7 @@
     "arlocal": "*",
     "arweave": "*",
     "ts-jest": "*",
-    "warp-contracts": "*",
-    "typescript": "*"
+    "typescript": "*",
+    "warp-contracts": "*"
   }
 }

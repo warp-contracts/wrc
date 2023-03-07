@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { getWarp, setContractTxId, loadWallet } = require('warp-contract-utils');
 const { contractSrc, wasmGlueCode, wasmSrcCodeDir } = require('erc20/utils');
+const { ArweaveSigner } = require('warp-contracts-plugin-deploy');
 //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
 (async () => {
@@ -23,8 +24,8 @@ const { contractSrc, wasmGlueCode, wasmSrcCodeDir } = require('erc20/utils');
     evolve: '',
   };
 
-  let deployment = await warp.createContract.deploy({
-    wallet: ownerWallet,
+  let deployment = await warp.deploy({
+    wallet: new ArweaveSigner(ownerWallet),
     initState: JSON.stringify(initialERC20State),
     src: fs.readFileSync(contractSrc),
     wasmSrcCodeDir: wasmSrcCodeDir,

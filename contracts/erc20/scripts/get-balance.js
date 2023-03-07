@@ -1,4 +1,4 @@
-const { getWarp, getContractTxId, loadWallet, getNetwork } = require('warp-contract-utils');
+const { getWarp, getContractTxId, loadWallet } = require('warp-contract-utils');
 
 (async () => {
   const warp = getWarp();

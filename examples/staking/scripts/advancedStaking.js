@@ -1,10 +1,4 @@
 const { getWarp, loadWallet, getContractTxId } = require('warp-contract-utils');
-const { LoggerFactory, TsLogFactory } = require('warp-contracts');
-
-//LoggerFactory.use(new TsLogFactory());
-//LoggerFactory.INST.logLevel('debug', 'CacheableStateEvaluator');
-//LoggerFactory.INST.logLevel('debug', 'WarpGatewayInteractionsLoader');
-//LoggerFactory.INST.logLevel('debug', 'HandlerBasedContract');
 
 async function approve(erc20, stakingTxId, amount) {
   console.log('Approving: ' + stakingTxId + ' for: ' + amount);

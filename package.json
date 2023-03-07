@@ -14,9 +14,8 @@
   },
   "scripts": {
     "build:atomic-asset-rust": "yarn workspace atomic-asset-rust build",
-    "test:atomic-asset-rust": "yarn workspace atomic-asset-rust test",
     "build:atomic-asset-typescript": "yarn workspace atomic-asset-typescript build",
-    "test:atomic-asset-typescript": "yarn workspace atomic-asset-typescript test",
+    "test:atomic-asset": "yarn workspace atomic-asset-test test",
     "build:erc20": "yarn workspace erc20 build",
     "test:erc20": "yarn workspace erc20 test",
     "build:pst": "yarn workspace pst build",
@@ -32,7 +31,8 @@
     "arweave": "1.11.4",
     "ts-jest": "^28.0.7",
     "typescript": "^4.7.4",
-    "warp-contracts": "1.2.52",
+    "warp-contracts": "1.2.55",
+    "warp-contracts-plugin-deploy": "^1.0.0",
     "yargs": "17.5.1"
   },
   "resolutions": {

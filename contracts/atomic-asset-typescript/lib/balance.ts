@@ -39,3 +39,20 @@ export function totalSupply(state: AtomicAssetState): TotalSupplyResult {
         value: state.totalSupply
     })
 }
+
+export type OwnerResult = {
+    result: {
+        value?: string
+    }
+}
+
+/**
+ * 
+ * @param state this contract mutable state
+ * @returns owner of the asset
+ */
+export function owner(state: AtomicAssetState): OwnerResult {
+    return Result({
+        value: state.owner
+    })
+}

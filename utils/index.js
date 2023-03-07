@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
+const { DeployPlugin } = require('warp-contracts-plugin-deploy');
 const argv = yargs(hideBin(process.argv)).argv;
 
 getTmpContractTxIdPath = function (network, dir, name) {
@@ -30,11 +31,11 @@ module.exports.getContractTxId = function (network, dir, name) {
 module.exports.getWarp = function () {
   const network = getNetwork();
   if (network == 'local') {
-    return WarpFactory.forLocal(1984);
+    return WarpFactory.forLocal(1984).use(new DeployPlugin());
   } else if (network == 'testnet') {
-    return WarpFactory.forTestnet();
+    return WarpFactory.forTestnet().use(new DeployPlugin());
   } else if (network == 'mainnet') {
-    return WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true });
+    return WarpFactory.forMainnet({ ...defaultCacheOptions, inMemory: true }).use(new DeployPlugin());
   } else {
     throw new Error('Unknown network: ' + network);
   }

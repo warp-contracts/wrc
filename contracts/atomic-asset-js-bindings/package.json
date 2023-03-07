@@ -1,6 +1,6 @@
 {
   "name": "atomic-asset-js-bindings",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "private": false,
@@ -11,5 +11,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {}
+  "dependencies": {},
+  "peerDependencies": {
+    "warp-contracts": "*"
+  }
 }

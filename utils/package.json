@@ -11,6 +11,7 @@
   },
   "peerDependencies": {
     "yargs": "*",
-    "warp-contracts": "*"
+    "warp-contracts": "*",
+    "warp-contracts-plugin-deploy": "*"
   }
 }

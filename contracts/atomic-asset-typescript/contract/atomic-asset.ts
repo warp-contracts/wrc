@@ -1,5 +1,5 @@
 import { allowance, approve, decreaseAllowance, increaseAllowance } from "../lib/allowance";
-import { balanceOf, totalSupply } from "../lib/balance";
+import { balanceOf, owner, totalSupply } from "../lib/balance";
 import { AtomicAssetState } from "../lib/faces";
 import { transfer, transferFrom } from "../lib/transfer";
 
@@ -27,20 +27,23 @@ export function handle(state: AtomicAssetState, action: Action) {
             return increaseAllowance(state, input.spender, input.amountToAdd);
         case FUNCTIONS.DECREASE_ALLOWANCE:
             return decreaseAllowance(state, input.spender, input.amountToSubtract);
+        case FUNCTIONS.OWNER:
+            return owner(state);
         default:
-            throw ContractError(`Function ${action.input.function} is not supported by this`)
+            throw new ContractError(`Function ${action.input.function} is not supported by this contract`)
     }
 
 }
 
 
-export enum FUNCTIONS {
+enum FUNCTIONS {
     TRANSFER = 'transfer',
     TRANSFER_FROM = 'transferFrom',
     ALLOWANCE = 'allowance',
     APPROVE = 'approve',
     BALANCE_OF = 'balanceOf',
     TOTAL_SUPPLY = 'totalSupply',
+    OWNER = 'owner',
     INCREASE_ALLOWANCE = 'increaseAllowance',
     DECREASE_ALLOWANCE = 'decreaseAllowance'
 }

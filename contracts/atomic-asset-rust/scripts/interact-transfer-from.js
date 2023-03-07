@@ -2,7 +2,7 @@ const { getWarp, getContractTxId, loadWallet } = require('warp-contract-utils');
 
 (async () => {
   const warp = getWarp();
-  const [wallet, walletAddress] = await loadWallet(warp);
+  const [wallet, walletAddress] = await loadWallet(warp, false, __dirname);
 
   let targetWallet;
   if (warp.environment === 'testnet' || warp.environment === 'local') {
@@ -27,7 +27,7 @@ const { getWarp, getContractTxId, loadWallet } = require('warp-contract-utils');
       function: 'transferFrom',
       from: walletAddress,
       to: targetAddress,
-      amount: 100000,
+      amount: 10000,
     },
     { strict: true }
   );

@@ -1,12 +1,11 @@
 {
-  "name": "atomic-asset-typescript",
+  "name": "atomic-asset-test",
   "version": "1.0.0",
   "description": "",
+  "main": "index.js",
   "private": false,
-  "main": "./dist/lib/index.js",
-  "types": "./dist/lib/index.d.ts",
   "scripts": {
-    "build": "tsc --project tsconfig-build.json"
+    "test": "jest --config jest.config.js"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +13,9 @@
   "dependencies": {},
   "devDependencies": {
     "esbuild": "^0.17.5"
+  },
+  "peerDependencies": {
+    "warp-contract-utils": "*",
+    "atomic-asset-js-bindings": "*"
   }
 }
