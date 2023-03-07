@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { getWarp, setContractTxId, loadWallet, getContractTxId, requireModule } = require('warp-contract-utils');
+const { ArweaveSigner } = require('warp-contracts-plugin-deploy');
 
 //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
@@ -20,7 +21,7 @@ const { getWarp, setContractTxId, loadWallet, getContractTxId, requireModule } =
   };
 
   let deployment = await warp.deploy({
-    wallet: ownerWallet,
+    wallet: new ArweaveSigner(ownerWallet),
     initState: JSON.stringify(initialStakingState),
     src: fs.readFileSync(path.join(__dirname, '../pkg/staking-contract_bg.wasm')),
     wasmSrcCodeDir: path.join(__dirname, '../pkg/src'),

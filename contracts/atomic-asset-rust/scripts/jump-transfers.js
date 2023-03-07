@@ -25,7 +25,7 @@ async function jumpTransfer(warp, wallet, atomicAsset) {
 
 (async () => {
   const warp = getWarp();
-  let [wallet] = await loadWallet(warp);
+  let [wallet] = await loadWallet(warp, false, __dirname);
 
   const atomicAsset = warp.contract(getContractTxId(warp.environment, __dirname)).connect(wallet);
 
