@@ -1,10 +1,10 @@
 {
   "name": "atomic-asset-typescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "atomic-asset standard contract implementation in typescript.",
   "private": false,
-  "main": "./dist/lib/index.js",
-  "types": "./dist/lib/index.d.ts",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "scripts": {
     "build": "tsc --project tsconfig-build.json"
   },
