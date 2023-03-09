@@ -1,6 +1,6 @@
 {
   "name": "atomic-asset-typescript",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "atomic-asset standard contract implementation in typescript.",
   "private": false,
   "main": "dist/lib/index.js",
