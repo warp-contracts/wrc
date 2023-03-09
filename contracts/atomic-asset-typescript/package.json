@@ -1,7 +1,7 @@
 {
   "name": "atomic-asset-typescript",
   "version": "1.0.0",
-  "description": "",
+  "description": "atomic-asset standard contract implementation in typescript.",
   "private": false,
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "esbuild": "^0.17.5"

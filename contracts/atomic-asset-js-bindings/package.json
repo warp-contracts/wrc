@@ -1,7 +1,7 @@
 {
   "name": "atomic-asset-js-bindings",
   "version": "1.0.1",
-  "description": "",
+  "description": "Atomic asset warp contracts bindings for javascript.",
   "main": "dist/index.js",
   "private": false,
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {},
   "peerDependencies": {
     "warp-contracts": "*"
