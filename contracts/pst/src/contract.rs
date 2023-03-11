@@ -1,14 +1,18 @@
-use crate::action::{Action, ActionResult};
-use crate::actions::balance::balance;
-use crate::actions::evolve::evolve;
-use crate::actions::foreign_read::{foreign_read};
-use crate::actions::foreign_write::foreign_write;
-use crate::actions::transfer::transfer;
-use warp_wasm_utils::contract_utils::js_imports::{Block, Contract, log, SmartWeave, Transaction};
-use crate::state::State;
+use crate::{
+    action::{Action, ViewResponse, WriteResponse},
+    actions::{
+        balance::balance, evolve::evolve, foreign_read::foreign_read, foreign_write::foreign_write,
+        transfer::transfer,
+    },
+    state::State,
+};
+use warp_contracts::{
+    js_imports::{log, Block, Contract, SmartWeave, Transaction},
+    warp_contract,
+};
 
-pub async fn handle(current_state: State, action: Action) -> ActionResult {
-
+#[warp_contract(write)]
+pub async fn handle(current_state: State, action: Action) -> WriteResponse {
     //Example of accessing functions imported from js:
     log("log from contract");
     log(&("Transaction::id()".to_owned() + &Transaction::id()));
@@ -26,9 +30,21 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
 
     match action {
         Action::Transfer { qty, target } => transfer(current_state, qty, target),
-        Action::Balance { target } => balance(current_state, target),
         Action::Evolve { value } => evolve(current_state, value),
         Action::ForeignRead { contract_tx_id } => foreign_read(current_state, contract_tx_id).await,
-        Action::ForeignWrite { contract_tx_id, qty, target } => foreign_write(current_state, contract_tx_id, qty, target).await,
+        Action::ForeignWrite {
+            contract_tx_id,
+            qty,
+            target,
+        } => foreign_write(current_state, contract_tx_id, qty, target).await,
+        _ => WriteResponse::RuntimeError(format!("invalid action for write method: {:?}", action)),
+    }
+}
+
+#[warp_contract(view)]
+pub async fn view(current_state: &State, action: Action) -> ViewResponse {
+    match action {
+        Action::Balance { target } => balance(current_state, target),
+        _ => ViewResponse::RuntimeError(format!("invalid action for view method: {:?}", action)),
     }
 }

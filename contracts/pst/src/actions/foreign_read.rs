@@ -1,17 +1,14 @@
-use crate::error::ContractError;
-use crate::state::State;
-use warp_wasm_utils::contract_utils::foreign_call::read_foreign_contract_state;
-use crate::action::ActionResult;
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
-use warp_wasm_utils::contract_utils::js_imports::log;
+use crate::{action::WriteResponse, error::ContractError::IDontLikeThisContract, state::State};
+use warp_contracts::{foreign_call::read_foreign_contract_state, js_imports::log};
 
-pub async fn foreign_read(mut state: State, contract_tx_id: String) -> ActionResult {
+pub async fn foreign_read(mut state: State, contract_tx_id: String) -> WriteResponse {
     if contract_tx_id == "bad_contract" {
-        Err(ContractError::IDontLikeThisContract)
+        WriteResponse::ContractError(IDontLikeThisContract)
     } else {
-        let foreign_contract_state: State =
-            read_foreign_contract_state(&contract_tx_id).await;
-
+        let foreign_contract_state: State = match read_foreign_contract_state(&contract_tx_id).await {
+            Ok(v) => v,
+            Err(e) => return WriteResponse::RuntimeError(format!("{:?}", e))
+        };
         // Some dummy logic - just for the sake of the integration test
         if foreign_contract_state.ticker == "FOREIGN_PST" {
             log("Adding to tokens");
@@ -20,6 +17,6 @@ pub async fn foreign_read(mut state: State, contract_tx_id: String) -> ActionRes
             }
         }
 
-        Ok(HandlerResult::NewState(state))
+        WriteResponse::Success(state)
     }
 }

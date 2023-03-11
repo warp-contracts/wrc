@@ -1,15 +1,16 @@
-use crate::error::ContractError::{CallerBalanceNotEnough, TransferAmountMustBeHigherThanZero};
-use crate::state::State;
-use crate::action::ActionResult;
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
-use warp_wasm_utils::contract_utils::js_imports::{log, SmartWeave, Transaction};
+use crate::{
+    action::WriteResponse,
+    error::ContractError::{CallerBalanceNotEnough, TransferAmountMustBeHigherThanZero},
+    state::State,
+};
+use warp_contracts::js_imports::{log, SmartWeave, Transaction};
 
-pub fn transfer(mut state: State, qty: u64, target: String) -> ActionResult {
+pub fn transfer(mut state: State, qty: u64, target: String) -> WriteResponse {
     log(("caller ".to_owned() + &SmartWeave::caller()).as_str());
     log(("Transaction owner ".to_owned() + &Transaction::owner()).as_str());
 
     if qty == 0 {
-        return Err(TransferAmountMustBeHigherThanZero);
+        return WriteResponse::ContractError(TransferAmountMustBeHigherThanZero);
     }
 
     let caller = Transaction::owner();
@@ -18,7 +19,7 @@ pub fn transfer(mut state: State, qty: u64, target: String) -> ActionResult {
     // Checking if caller has enough funds
     let caller_balance = *balances.get(&caller).unwrap_or(&0);
     if caller_balance < qty {
-        return Err(CallerBalanceNotEnough(caller_balance));
+        return WriteResponse::ContractError(CallerBalanceNotEnough(caller_balance));
     }
 
     // Update caller balance
@@ -28,5 +29,5 @@ pub fn transfer(mut state: State, qty: u64, target: String) -> ActionResult {
     let target_balance = *balances.get(&target).unwrap_or(&0);
     balances.insert(target, target_balance + qty);
 
-    Ok(HandlerResult::NewState(state))
+    WriteResponse::Success(state)
 }
