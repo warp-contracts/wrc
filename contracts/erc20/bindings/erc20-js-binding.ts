@@ -6,6 +6,7 @@ import {
   ArWallet,
   Contract,
   ContractDeploy,
+  ContractError,
   HandlerBasedContract,
   Warp,
   WriteInteractionResponse,
@@ -165,30 +166,33 @@ export class ERC20ContractImpl extends HandlerBasedContract<ERC20State> implemen
   async balanceOf(target: string): Promise<BalanceResult> {
     const interactionResult = await this.viewState({ function: 'balanceOf', target });
 
-    if (interactionResult.type !== 'ok') {
+    if (interactionResult.type == 'error') {
+      throw new ContractError(interactionResult.error);
+    } else if (interactionResult.type == 'exception') {
       throw Error(interactionResult.errorMessage);
     }
-
     return interactionResult.result as BalanceResult;
   }
 
   async totalSupply(): Promise<TotalSupplyResult> {
     const interactionResult = await this.viewState({ function: 'totalSupply' });
 
-    if (interactionResult.type !== 'ok') {
+    if (interactionResult.type == 'error') {
+      throw new ContractError(interactionResult.error);
+    } else if (interactionResult.type == 'exception') {
       throw Error(interactionResult.errorMessage);
     }
-
     return interactionResult.result as TotalSupplyResult;
   }
 
   async allowance(owner: string, spender: string): Promise<AllowanceResult> {
     const interactionResult = await this.viewState({ function: 'allowance', owner, spender });
 
-    if (interactionResult.type !== 'ok') {
+    if (interactionResult.type == 'error') {
+      throw new ContractError(interactionResult.error);
+    } else if (interactionResult.type == 'exception') {
       throw Error(interactionResult.errorMessage);
     }
-
     return interactionResult.result as AllowanceResult;
   }
 

@@ -1,7 +1,8 @@
 import ArLocal from 'arlocal';
 import { JWKInterface } from 'arweave/node/lib/wallet';
+import { assert } from 'console';
 import { getTag } from 'warp-contract-utils';
-import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
+import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags, ContractError } from 'warp-contracts';
 import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 import { connectERC20, deployERC20, ERC20Contract, ERC20State } from '../bindings/erc20-js-binding';
 
@@ -89,7 +90,7 @@ describe('Testing the ERC20 Token', () => {
         to: 'user2',
         amount: 101,
       })
-    ).rejects.toThrow('Cannot create interaction: [CE:CallerBalanceNotEnough 100]');
+    ).rejects.toThrow(/CallerBalanceNotEnough.*100/);
   });
 
   it('should properly transfer tokens', async () => {
@@ -122,7 +123,7 @@ describe('Testing the ERC20 Token', () => {
         to: user3,
         amount: 21,
       })
-    ).rejects.toThrow('Cannot create interaction: [CE:CallerAllowanceNotEnough 20]');
+    ).rejects.toThrow(/CallerAllowanceNotEnough.*20/);
   });
 
   it('should transfer tokens using allowance', async () => {

@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone, Default, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct State {
     pub symbol: String,
@@ -14,5 +14,5 @@ pub struct State {
     //Evolve interface
     pub owner: String,
     pub evolve: Option<String>,
-    pub can_evolve: Option<bool>
+    pub can_evolve: Option<bool>,
 }
