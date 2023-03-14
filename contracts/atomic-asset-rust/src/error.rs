@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub enum ContractError {
     RuntimeError(String),
     CallerBalanceNotEnough(u64),

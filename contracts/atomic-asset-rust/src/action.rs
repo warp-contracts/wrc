@@ -1,10 +1,8 @@
+use crate::{error::ContractError, state::State};
 use serde::{Deserialize, Serialize};
+use warp_contracts::handler_result::{ViewResult, WriteResult};
 
-use crate::error::ContractError;
-use crate::state::State;
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
-
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase", tag = "function")]
 pub enum Action {
     Transfer {
@@ -41,7 +39,7 @@ pub enum Action {
     Owner {},
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase", untagged)]
 pub enum QueryResponseMsg {
     Balance {
@@ -61,4 +59,5 @@ pub enum QueryResponseMsg {
     },
 }
 
-pub type ActionResult = Result<HandlerResult<State, QueryResponseMsg>, ContractError>;
+pub type WriteResponse = WriteResult<State, ContractError>;
+pub type ViewResponse = ViewResult<QueryResponseMsg, ContractError>;

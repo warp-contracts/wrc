@@ -1,6 +1,7 @@
 
 import {
   Contract,
+  ContractError,
   HandlerBasedContract,
   WriteInteractionOptions,
   WriteInteractionResponse,
@@ -157,41 +158,44 @@ export class AtomicAssetContractImpl extends HandlerBasedContract<AtomicAssetSta
 
   async balanceOf(target: string): Promise<BalanceResult> {
     const interactionResult = await this.viewState({ function: 'balanceOf', target });
-
-    if (interactionResult.type !== 'ok') {
+    if (interactionResult.type == 'error') {
+      throw new ContractError(interactionResult.error);
+    } else if (interactionResult.type == 'exception') {
       throw Error(interactionResult.errorMessage);
     }
-
     return interactionResult.result as BalanceResult;
   }
 
   async totalSupply(): Promise<TotalSupplyResult> {
     const interactionResult = await this.viewState({ function: 'totalSupply' });
 
-    if (interactionResult.type !== 'ok') {
+    if (interactionResult.type == 'error') {
+      throw new ContractError(interactionResult.error);
+    } else if (interactionResult.type == 'exception') {
       throw Error(interactionResult.errorMessage);
     }
-
     return interactionResult.result as TotalSupplyResult;
   }
 
   async allowance(owner: string, spender: string): Promise<AllowanceResult> {
     const interactionResult = await this.viewState({ function: 'allowance', owner, spender });
 
-    if (interactionResult.type !== 'ok') {
+    if (interactionResult.type == 'error') {
+      throw new ContractError(interactionResult.error);
+    } else if (interactionResult.type == 'exception') {
       throw Error(interactionResult.errorMessage);
     }
-
     return interactionResult.result as AllowanceResult;
   }
 
   async owner(): Promise<OwnerResult> {
     const ownerResult = await this.viewState({ function: 'owner' });
 
-    if (ownerResult.type !== 'ok') {
+    if (ownerResult.type == 'error') {
+      throw new ContractError(ownerResult.error);
+    } else if (ownerResult.type == 'exception') {
       throw Error(ownerResult.errorMessage);
     }
-
     return ownerResult.result as OwnerResult;
   }
 

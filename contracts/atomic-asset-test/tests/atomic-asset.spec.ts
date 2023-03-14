@@ -106,7 +106,7 @@ describe('Atomic Assets', () => {
         },
           { strict: true }
         )
-      ).rejects.toThrow('Cannot create interaction: [CE:CallerBalanceNotEnough 100]');
+      ).rejects.toThrow(/Cannot create interaction.*CallerBalanceNotEnough.*100/);
     });
 
     it('should keep the owner if total supply belongs to one address', async () => {
@@ -167,7 +167,7 @@ describe('Atomic Assets', () => {
         },
           { strict: true }
         )
-      ).rejects.toThrow('Cannot create interaction: [CE:CallerAllowanceNotEnough 20]');
+      ).rejects.toThrow(/Cannot create interaction:.*CallerAllowanceNotEnough.*20/);
     });
 
     it('should transfer tokens using allowance', async () => {
@@ -313,7 +313,7 @@ describe('Atomic Assets', () => {
     });
 
     it('should throw when decreaseAllowance below zero', async () => {
-      await expect(atomicAsset.decreaseAllowance({ spender: user3, amountToSubtract: 30 }, { strict: true })).rejects.toThrowError("Cannot create interaction: [CE:AllowanceHasToGtThenZero]");
+      await expect(atomicAsset.decreaseAllowance({ spender: user3, amountToSubtract: 30 }, { strict: true })).rejects.toThrow(/Cannot create interaction.*AllowanceHasToGtThenZero/);
     });
 
   });

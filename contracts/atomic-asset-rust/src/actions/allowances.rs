@@ -1,20 +1,20 @@
-use crate::action::{ActionResult, QueryResponseMsg::Allowance};
-use crate::error::ContractError::AllowanceHasToGtThenZero;
-use crate::state::State;
+use crate::{
+    action::{QueryResponseMsg::Allowance, ViewResponse, WriteResponse},
+    error::ContractError::AllowanceHasToGtThenZero,
+    state::State,
+};
 use std::collections::HashMap;
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult::QueryResponse;
-use warp_wasm_utils::contract_utils::js_imports::Transaction;
+use warp_contracts::js_imports::Transaction;
 
-pub fn allowance(state: State, owner: String, spender: String) -> ActionResult {
-    Ok(QueryResponse(Allowance {
+pub fn allowance(state: &State, owner: String, spender: String) -> ViewResponse {
+    ViewResponse::Success(Allowance {
         allowance: __get_allowance(&state.allowances, &owner, &spender),
         owner,
         spender,
-    }))
+    })
 }
 
-pub fn increase_allowance(mut state: State, spender: String, amount_to_add: u64) -> ActionResult {
+pub fn increase_allowance(mut state: State, spender: String, amount_to_add: u64) -> WriteResponse {
     let caller = Transaction::owner();
 
     let allowed = __get_allowance(&state.allowances, &caller, &spender);
@@ -26,20 +26,20 @@ pub fn increase_allowance(mut state: State, spender: String, amount_to_add: u64)
         allowed + amount_to_add,
     );
 
-    Ok(HandlerResult::NewState(state))
+    WriteResponse::Success(state)
 }
 
 pub fn decrease_allowance(
     mut state: State,
     spender: String,
     amount_to_subtract: u64,
-) -> ActionResult {
+) -> WriteResponse {
     let caller = Transaction::owner();
 
     let allowed = __get_allowance(&state.allowances, &caller, &spender);
 
     if allowed < amount_to_subtract {
-        return Err(AllowanceHasToGtThenZero);
+        return WriteResponse::ContractError(AllowanceHasToGtThenZero);
     }
 
     __set_allowance(
@@ -49,13 +49,13 @@ pub fn decrease_allowance(
         allowed - amount_to_subtract,
     );
 
-    Ok(HandlerResult::NewState(state))
+    WriteResponse::Success(state)
 }
 
-pub fn approve(mut state: State, spender: String, amount: u64) -> ActionResult {
+pub fn approve(mut state: State, spender: String, amount: u64) -> WriteResponse {
     let caller = Transaction::owner();
     __set_allowance(&mut state.allowances, caller, spender, amount);
-    Ok(HandlerResult::NewState(state))
+    WriteResponse::Success(state)
 }
 
 //Following: https://users.rust-lang.org/t/use-of-pub-for-non-public-apis/40480

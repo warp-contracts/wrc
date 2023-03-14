@@ -1,24 +1,25 @@
-use crate::action::ActionResult;
-use crate::actions::allowances::{__get_allowance, __set_allowance};
-use crate::error::ContractError::{CallerAllowanceNotEnough, CallerBalanceNotEnough};
-use crate::state::State;
-use warp_wasm_utils::contract_utils::handler_result::HandlerResult;
-use warp_wasm_utils::contract_utils::js_imports::SmartWeave;
+use crate::{
+    action::WriteResponse,
+    actions::allowances::{__get_allowance, __set_allowance},
+    error::ContractError::{CallerAllowanceNotEnough, CallerBalanceNotEnough},
+    state::State,
+};
+use warp_contracts::js_imports::SmartWeave;
 
-pub fn transfer(state: State, to: String, amount: u64) -> ActionResult {
+pub fn transfer(state: State, to: String, amount: u64) -> WriteResponse {
     let caller = SmartWeave::caller();
 
     return _transfer(state, caller, to, amount);
 }
 
-pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
+pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) -> WriteResponse {
     let caller = SmartWeave::caller();
 
     //Checking allowance
     let allowance = __get_allowance(&state.allowances, &from, &caller);
 
     if allowance < amount {
-        return Err(CallerAllowanceNotEnough(allowance));
+        return WriteResponse::ContractError(CallerAllowanceNotEnough(allowance));
     }
 
     __set_allowance(
@@ -31,13 +32,13 @@ pub fn transfer_from(mut state: State, from: String, to: String, amount: u64) ->
     return _transfer(state, from, to, amount);
 }
 
-pub fn _transfer(mut state: State, from: String, to: String, amount: u64) -> ActionResult {
+pub fn _transfer(mut state: State, from: String, to: String, amount: u64) -> WriteResponse {
     // Checking if caller has enough funds
     let balances = &mut state.balances;
     let from_balance = *balances.get(&from).unwrap_or(&0);
 
     if from_balance < amount {
-        return Err(CallerBalanceNotEnough(from_balance));
+        return WriteResponse::ContractError(CallerBalanceNotEnough(from_balance));
     }
 
     // Update caller balance or prune state if the new value is 0
@@ -53,7 +54,7 @@ pub fn _transfer(mut state: State, from: String, to: String, amount: u64) -> Act
     // Update ownership if necessary
     _claim_ownership(&mut state, from, to);
 
-    Ok(HandlerResult::NewState(state))
+    WriteResponse::Success(state)
 }
 
 fn _claim_ownership(state: &mut State, from: String, to: String) {
