@@ -34,8 +34,9 @@ describe('Testing the Staking Logic', () => {
     // with another files has to have ArLocal set to a different port!)
     arlocal = new ArLocal(1821, false);
     await arlocal.start();
+    Error.stackTraceLimit = 25;
 
-    LoggerFactory.INST.logLevel('error');
+    LoggerFactory.INST.logLevel('debug');
     //LoggerFactory.INST.logLevel('debug', 'WASM:Rust');
     //LoggerFactory.INST.logLevel('debug', 'WasmContractHandlerApi');
 
@@ -134,7 +135,7 @@ describe('Testing the Staking Logic', () => {
     expect((await erc20.allowance(user1, stakingContractTxId)).allowance).toEqual(120);
 
     await expect(staking.stake(110)).rejects.toThrow(
-      'Cannot create interaction: [CE:FailedTokenTransfer [CE:CallerBalanceNotEnough 100]]'
+      /CallerBalanceNotEnough/
     );
   });
 
@@ -151,7 +152,7 @@ describe('Testing the Staking Logic', () => {
     expect((await staking.stakeOf(user1)).stake).toEqual(0);
 
     await expect(staking.stake(60)).rejects.toThrow(
-      'Cannot create interaction: [CE:FailedTokenTransfer [CE:CallerAllowanceNotEnough 50]]'
+      /CallerAllowanceNotEnough/
     );
   });
 

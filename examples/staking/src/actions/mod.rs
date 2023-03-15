@@ -1,2 +1,2 @@
-pub mod staking;
 pub mod evolve;
+pub mod staking;

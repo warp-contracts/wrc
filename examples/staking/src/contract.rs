@@ -1,15 +1,18 @@
-use crate::action::{Action, ActionResult};
-use crate::actions::staking::stake;
-use crate::actions::staking::withdraw;
-use crate::actions::staking::stake_of;
-use crate::actions::staking::stake_all;
-use crate::actions::staking::re_stake;
-use crate::actions::evolve::evolve;
-use crate::contract_utils::js_imports::{Block, Contract, log, SmartWeave, Transaction};
-use crate::state::State;
+use crate::{
+    action::{Action, ViewResponse, WriteResponse},
+    actions::{
+        evolve::evolve,
+        staking::{re_stake, stake, stake_all, stake_of, withdraw},
+    },
+    state::State,
+};
+use warp_contracts::{
+    js_imports::{log, Block, Contract, SmartWeave, Transaction},
+    warp_contract,
+};
 
-pub async fn handle(current_state: State, action: Action) -> ActionResult {
-
+#[warp_contract(write)]
+pub async fn handle(current_state: State, action: Action) -> WriteResponse {
     //Example of accessing functions imported from js:
     log("log from contract");
     log(&("Transaction::id()".to_owned() + &Transaction::id()));
@@ -27,10 +30,18 @@ pub async fn handle(current_state: State, action: Action) -> ActionResult {
 
     match action {
         Action::Stake { amount } => stake(current_state, amount).await,
-        Action::StakeAll { } => stake_all(current_state).await,
-        Action::ReStake { } => re_stake(current_state).await,
+        Action::StakeAll {} => stake_all(current_state).await,
+        Action::ReStake {} => re_stake(current_state).await,
         Action::Withdraw { amount } => withdraw(current_state, amount).await,
-        Action::StakeOf { target } => stake_of(current_state, target),
         Action::Evolve { value } => evolve(current_state, value),
+        _ => WriteResponse::RuntimeError(format!("invalid action for write method: {:?}", action)),
+    }
+}
+
+#[warp_contract(view)]
+pub async fn view(current_state: &State, action: Action) -> ViewResponse {
+    match action {
+        Action::StakeOf { target } => stake_of(current_state, target),
+        _ => ViewResponse::RuntimeError(format!("invalid action for write method: {:?}", action)),
     }
 }

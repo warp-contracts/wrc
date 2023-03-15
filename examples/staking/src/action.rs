@@ -1,35 +1,32 @@
+use crate::{error::ContractError, state::State};
 use serde::{Deserialize, Serialize};
+use warp_contracts::handler_result::{ViewResult, WriteResult};
 
-use crate::contract_utils::handler_result::HandlerResult;
-use crate::error::ContractError;
-use crate::state::State;
-
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 #[serde(rename_all = "camelCase", tag = "function")]
 pub enum Action {
     #[serde(rename_all = "camelCase")]
     Stake {
-        amount: u64
+        amount: u64,
     },
     Withdraw {
-        amount: u64
+        amount: u64,
     },
     StakeOf {
-        target: String
+        target: String,
     },
     StakeAll {},
     ReStake {},
     Evolve {
-        value: String
-    }
+        value: String,
+    },
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase", untagged)]
 pub enum QueryResponseMsg {
-    Stake {
-        stake: u64,
-    }
+    Stake { stake: u64 },
 }
 
-pub type ActionResult = Result<HandlerResult<State, QueryResponseMsg>, ContractError>;
+pub type WriteResponse = WriteResult<State, ContractError>;
+pub type ViewResponse = ViewResult<QueryResponseMsg, ContractError>;

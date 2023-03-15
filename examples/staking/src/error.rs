@@ -1,11 +1,12 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum ContractError {
-  FailedTokenTransfer(String),
-  RuntimeError(String),
-  StakingAmountMustBeHigherThanZero,
-  WithdrawalAmountMustBeHigherThanZero,
-  EvolveNotAllowed,
-  OnlyOwnerCanEvolve
+    FailedTokenTransfer(String),
+    CallerAllowanceNotEnough(u64),
+    CallerBalanceNotEnough(u64),
+    StakingAmountMustBeHigherThanZero,
+    WithdrawalAmountMustBeHigherThanZero,
+    EvolveNotAllowed,
+    OnlyOwnerCanEvolve,
 }

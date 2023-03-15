@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone, Default, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ERC20State {
     pub symbol: String,
@@ -14,5 +14,18 @@ pub struct ERC20State {
     //Evolve interface
     pub owner: String,
     pub evolve: Option<String>,
-    pub can_evolve: Option<bool>
+    pub can_evolve: Option<bool>,
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase", tag = "function")]
+pub enum View {
+    BalanceOf { target: String },
+}
+
+#[derive(Deserialize, Debug)]
+pub struct BalanceResult {
+    pub ticker: String,
+    pub target: String,
+    pub balance: u64,
 }
