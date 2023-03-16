@@ -27,7 +27,7 @@ jobs:
         run: yarn build:pst
       - name: PST run tests
         run: yarn test:pst
-      # - name: Staking contract build TODO: waiting for warp-contracts internal writes fix
-      #   run: yarn build:example:staking
-      # - name: Staking contract test
-      #   run: yarn test:example:staking
+      - name: Staking contract build
+        run: yarn build:example:staking
+      - name: Staking contract test
+        run: yarn test:example:staking
