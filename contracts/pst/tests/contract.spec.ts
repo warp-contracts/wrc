@@ -9,7 +9,8 @@ import {
   PstState,
   Warp,
   WarpFactory,
-  SmartWeaveTags,
+  SMART_WEAVE_TAGS,
+  WARP_TAGS,
 } from 'warp-contracts';
 import path from 'path';
 import { getTag } from 'warp-contract-utils';
@@ -111,9 +112,9 @@ describe('Testing the Profit Sharing Token', () => {
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID));
-    expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual('application/wasm');
-    expect(getTag(contractSrcTx, SmartWeaveTags.WASM_LANG)).toEqual('rust');
+    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SMART_WEAVE_TAGS. CONTRACT_SRC_TX_ID));
+    expect(getTag(contractSrcTx, SMART_WEAVE_TAGS. CONTENT_TYPE)).toEqual('application/wasm');
+    expect(getTag(contractSrcTx, WARP_TAGS. WASM_LANG)).toEqual('rust');
   });
 
   it('should read pst state and balance data', async () => {

@@ -1,6 +1,6 @@
 import ArLocal from 'arlocal';
 import { JWKInterface } from 'arweave/node/lib/wallet';
-import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
+import { LoggerFactory, Warp, WarpFactory, SMART_WEAVE_TAGS, WARP_TAGS } from 'warp-contracts';
 
 import { connectERC20, deployERC20, ERC20Contract, ERC20State } from 'erc20/bindings/erc20-js-binding';
 
@@ -95,9 +95,9 @@ describe('Testing the Staking Logic', () => {
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID));
-    expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual('application/wasm');
-    expect(getTag(contractSrcTx, SmartWeaveTags.WASM_LANG)).toEqual('rust');
+    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SMART_WEAVE_TAGS. CONTRACT_SRC_TX_ID));
+    expect(getTag(contractSrcTx, SMART_WEAVE_TAGS. CONTENT_TYPE)).toEqual('application/wasm');
+    expect(getTag(contractSrcTx, WARP_TAGS. WASM_LANG)).toEqual('rust');
 
     expect(await erc20.currentState()).toEqual(initialERC20State);
   });
@@ -107,9 +107,9 @@ describe('Testing the Staking Logic', () => {
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID));
-    expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual('application/wasm');
-    expect(getTag(contractSrcTx, SmartWeaveTags.WASM_LANG)).toEqual('rust');
+    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SMART_WEAVE_TAGS. CONTRACT_SRC_TX_ID));
+    expect(getTag(contractSrcTx, SMART_WEAVE_TAGS. CONTENT_TYPE)).toEqual('application/wasm');
+    expect(getTag(contractSrcTx, WARP_TAGS. WASM_LANG)).toEqual('rust');
 
     expect(await staking.currentState()).toEqual(initialStakingState);
   });

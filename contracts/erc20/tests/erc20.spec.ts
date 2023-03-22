@@ -2,7 +2,7 @@ import ArLocal from 'arlocal';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { assert } from 'console';
 import { getTag } from 'warp-contract-utils';
-import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags, ContractError } from 'warp-contracts';
+import { LoggerFactory, Warp, WarpFactory, SMART_WEAVE_TAGS, WARP_TAGS } from 'warp-contracts';
 import { DeployPlugin } from 'warp-contracts-plugin-deploy';
 import { connectERC20, deployERC20, ERC20Contract, ERC20State } from '../bindings/erc20-js-binding';
 
@@ -73,9 +73,9 @@ describe('Testing the ERC20 Token', () => {
 
     expect(contractTx).not.toBeNull();
 
-    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID));
-    expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual('application/wasm');
-    expect(getTag(contractSrcTx, SmartWeaveTags.WASM_LANG)).toEqual('rust');
+    const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SMART_WEAVE_TAGS. CONTRACT_SRC_TX_ID));
+    expect(getTag(contractSrcTx, SMART_WEAVE_TAGS. CONTENT_TYPE)).toEqual('application/wasm');
+    expect(getTag(contractSrcTx, WARP_TAGS.WASM_LANG)).toEqual('rust');
   });
 
   it('should read erc20 state and balance data', async () => {

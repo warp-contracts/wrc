@@ -1,7 +1,7 @@
 import ArLocal from 'arlocal';
 import { JWKInterface } from 'arweave/node/lib/wallet';
 import { getTag } from 'warp-contract-utils';
-import { LoggerFactory, Warp, WarpFactory, SmartWeaveTags } from 'warp-contracts';
+import { LoggerFactory, Warp, WarpFactory, SMART_WEAVE_TAGS, WARP_TAGS } from 'warp-contracts';
 import { AtomicAssetState, AtomicAssetContract } from "atomic-asset-js-bindings";
 import { connectAtomicAsset, deployAtomicAsset as rustDeploy } from '../rust-impl';
 import { deployAtomicAsset as tsDeploy } from '../ts-impl';
@@ -82,13 +82,13 @@ describe('Atomic Assets', () => {
 
       expect(contractTx).not.toBeNull();
 
-      const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SmartWeaveTags.CONTRACT_SRC_TX_ID));
+      const contractSrcTx = await warp.arweave.transactions.get(getTag(contractTx, SMART_WEAVE_TAGS. CONTRACT_SRC_TX_ID));
       if (implementation === "Rust") {
-        expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual('application/wasm');
-        expect(getTag(contractSrcTx, SmartWeaveTags.WASM_LANG)).toEqual('rust');
+        expect(getTag(contractSrcTx, SMART_WEAVE_TAGS. CONTENT_TYPE)).toEqual('application/wasm');
+        expect(getTag(contractSrcTx, WARP_TAGS. WASM_LANG)).toEqual('rust');
       } else if (implementation === "Typescript") {
-        expect(getTag(contractSrcTx, SmartWeaveTags.CONTENT_TYPE)).toEqual('application/javascript');
-        expect(getTag(contractSrcTx, SmartWeaveTags.WASM_LANG)).toEqual(false);
+        expect(getTag(contractSrcTx, SMART_WEAVE_TAGS. CONTENT_TYPE)).toEqual('application/javascript');
+        expect(getTag(contractSrcTx, WARP_TAGS. WASM_LANG)).toEqual(false);
       }
     });
 
